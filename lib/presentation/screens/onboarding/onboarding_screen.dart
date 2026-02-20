@@ -37,7 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 7, 4, 33), // Deepest dark color
       body: OnboardingBackground(
         child: PageView(
           controller: _pageController,

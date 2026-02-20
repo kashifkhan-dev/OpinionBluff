@@ -104,7 +104,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
         FadeTransition(
           opacity: _fadeAnimation,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+            padding: EdgeInsets.fromLTRB(
+              MediaQuery.of(context).size.shortestSide >= 600 ? 120 : 56,
+              0,
+              MediaQuery.of(context).size.shortestSide >= 600 ? 120 : 56,
+              40,
+            ),
             child: SizedBox(
               width: double.infinity,
               height: 60,

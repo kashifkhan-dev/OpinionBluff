@@ -284,7 +284,7 @@ class _HypeScreenState extends State<HypeScreen> {
               const Spacer(),
               // Action Buttons
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.shortestSide >= 600 ? 120 : 56),
                 child: Column(
                   children: [
                     SizedBox(

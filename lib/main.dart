@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:opinion_bluff/core/routing/app_router.dart';
 import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
+import 'package:opinion_bluff/presentation/widgets/onboarding_background.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => OnboardingViewModel())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
+        ChangeNotifierProvider(create: (_) => GameConfigViewModel()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -23,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: OnboardingBackground.themeColors[0],
       ),
       routerConfig: appRouter,
     );

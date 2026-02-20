@@ -11,6 +11,8 @@ class PreferenceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<OnboardingViewModel>();
+    final bool isIPad = MediaQuery.of(context).size.shortestSide >= 600;
+
     final options = [
       {'label': 'Friends', 'image': 'assets/onboarding/selections/friend1.jpeg', 'color': Colors.blue},
       {'label': 'Family', 'image': 'assets/onboarding/selections/family2.jpeg', 'color': Colors.amber},
@@ -43,35 +45,40 @@ class PreferenceScreen extends StatelessWidget {
         ),
         // Main Content starting below the top section
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 150, 24, 0),
+          padding: EdgeInsets.fromLTRB(isIPad ? 64 : 24, 150, isIPad ? 64 : 24, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Selection Grid
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.9,
-                  ),
-                  itemCount: options.length,
-                  itemBuilder: (context, index) {
-                    final option = options[index];
-                    final isSelected = viewModel.data.playerPreference == (option['label'] as String);
-                    final isSomethingSelected = viewModel.data.playerPreference.isNotEmpty;
-                    final double scale = isSelected ? 1.05 : (isSomethingSelected ? 0.92 : 1.0);
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: isIPad ? 800 : double.infinity),
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: isIPad ? 32 : 16,
+                        crossAxisSpacing: isIPad ? 32 : 16,
+                        childAspectRatio: isIPad ? 1.1 : 0.9,
+                      ),
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final option = options[index];
+                        final isSelected = viewModel.data.playerPreference == (option['label'] as String);
+                        final isSomethingSelected = viewModel.data.playerPreference.isNotEmpty;
+                        final double scale = isSelected ? 1.05 : (isSomethingSelected ? 0.92 : 1.0);
 
-                    return _PreferenceOptionTile(
-                      label: option['label'] as String,
-                      image: option['image'] as String,
-                      baseColor: option['color'] as Color,
-                      isSelected: isSelected,
-                      scale: scale,
-                      onTap: () => viewModel.updatePlayerPreference(option['label'] as String),
-                    );
-                  },
+                        return _PreferenceOptionTile(
+                          label: option['label'] as String,
+                          image: option['image'] as String,
+                          baseColor: option['color'] as Color,
+                          isSelected: isSelected,
+                          scale: scale,
+                          onTap: () => viewModel.updatePlayerPreference(option['label'] as String),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
               const Text(
@@ -81,14 +88,17 @@ class PreferenceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               // Continue Button
-              SizedBox(
-                height: 60,
-                child: CNButton(
-                  label: 'Continue',
-                  config: CNButtonConfig(
-                    style: viewModel.isPreferenceSelected ? CNButtonStyle.prominentGlass : CNButtonStyle.glass,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: isIPad ? 80 : 32),
+                child: SizedBox(
+                  height: 60,
+                  child: CNButton(
+                    label: 'Continue',
+                    config: CNButtonConfig(
+                      style: viewModel.isPreferenceSelected ? CNButtonStyle.prominentGlass : CNButtonStyle.glass,
+                    ),
+                    onPressed: viewModel.isPreferenceSelected ? onContinue : null,
                   ),
-                  onPressed: viewModel.isPreferenceSelected ? onContinue : null,
                 ),
               ),
               const SizedBox(height: 40),
@@ -176,12 +186,12 @@ class _PreferenceOptionTileState extends State<_PreferenceOptionTile> with Singl
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(32),
                   border: Border.all(
                     color: widget.isSelected
                         ? widget.baseColor.withValues(alpha: borderAlpha)
                         : Colors.white.withValues(alpha: 0.1),
-                    width: 1.5 + (2.5 * t), // Smoothly increase from 1.5 to 4.0
+                    width: 1.5 + (4.5 * t), // Smoothly increase from 1.5 to 4.0
                   ),
                   boxShadow: t > 0
                       ? [BoxShadow(color: widget.baseColor.withValues(alpha: 0.3 * t), blurRadius: 15, spreadRadius: 1)]
@@ -218,7 +228,7 @@ class _PreferenceOptionTileState extends State<_PreferenceOptionTile> with Singl
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
-                              fontWeight: t > 0.5 ? FontWeight.bold : FontWeight.w600,
+                              fontWeight: t > 0.5 ? FontWeight.w900 : FontWeight.w600,
                               shadows: [
                                 Shadow(
                                   color: Colors.black.withValues(alpha: 0.5 + (0.3 * t)),

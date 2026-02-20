@@ -6,6 +6,12 @@ class OnboardingBackground extends StatefulWidget {
 
   const OnboardingBackground({super.key, required this.child});
 
+  static const List<Color> themeColors = [
+    Color.fromARGB(255, 4, 3, 12),
+    Color.fromARGB(255, 2, 13, 34),
+    Color.fromARGB(255, 1, 24, 47),
+  ];
+
   @override
   State<OnboardingBackground> createState() => _OnboardingBackgroundState();
 }
@@ -16,7 +22,7 @@ class _OnboardingBackgroundState extends State<OnboardingBackground> with Single
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 15))..repeat();
   }
 
   @override
@@ -32,54 +38,51 @@ class _OnboardingBackgroundState extends State<OnboardingBackground> with Single
       builder: (context, child) {
         return Stack(
           children: [
-            // Animated Deep Immersive Blue Gradient Background
+            // Animated Deep Immersive Dark Gradient Background
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                     transform: GradientRotation(_controller.value * 2 * math.pi),
-                    colors: const [
-                      Color.fromARGB(255, 7, 4, 33),
-                      Color.fromARGB(255, 1, 22, 61),
-                      Color.fromARGB(255, 12, 43, 74),
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
+                    colors: OnboardingBackground.themeColors,
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
             ),
-            // Primary Ambient Arctic Glow (Bottom Right)
+            // Primary Ambient Glow (Soft and Subtle)
             Positioned(
-              bottom: -180 + (60 * (0.5 + 0.5 * math.sin(_controller.value * 2 * math.pi))),
-              right: -180 + (60 * (0.5 + 0.5 * math.sin(_controller.value * 2 * math.pi))),
+              bottom: -200 + (100 * math.sin(_controller.value * 2 * math.pi)),
+              right: -200 + (100 * math.cos(_controller.value * 2 * math.pi)),
               child: Container(
-                width: 700,
-                height: 700,
+                width: 800,
+                height: 800,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
-                    colors: [const Color(0xFF093F76).withValues(alpha: 0.15), Colors.transparent],
+                    colors: [const Color(0xFF093F76).withValues(alpha: 0.12), Colors.transparent],
                   ),
                 ),
               ),
             ),
-            // Secondary Ambient Midnight Glow (Top Left)
+            // Secondary Ambient Glow
             Positioned(
-              top: -100 - (50 * (0.5 + 0.5 * math.cos(_controller.value * 2 * math.pi))),
-              left: -100 - (50 * (0.5 + 0.5 * math.cos(_controller.value * 2 * math.pi))),
+              top: -150 + (80 * math.cos(_controller.value * 2 * math.pi)),
+              left: -150 + (80 * math.sin(_controller.value * 2 * math.pi)),
               child: Container(
-                width: 500,
-                height: 500,
+                width: 600,
+                height: 600,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
-                    colors: [const Color(0xFF001E57).withValues(alpha: 0.25), Colors.transparent],
+                    colors: [const Color(0xFF001E57).withValues(alpha: 0.18), Colors.transparent],
                   ),
                 ),
               ),
             ),
+            // The child is now wrapped in SafeArea again to protect content layout
             SafeArea(child: widget.child),
           ],
         );
