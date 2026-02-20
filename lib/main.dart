@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:opinion_bluff/core/routing/app_router.dart';
 import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/onboarding_background.dart';
+import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
+import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
 
 void main() {
   runApp(
@@ -11,6 +12,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => GameConfigViewModel()),
+        ChangeNotifierProvider(create: (_) => RevealProvider()),
+        ChangeNotifierProvider(create: (_) => DiscussionProvider()),
       ],
       child: const MyApp(),
     ),
@@ -28,49 +31,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.dark),
         useMaterial3: true,
-        scaffoldBackgroundColor: OnboardingBackground.themeColors[0],
+        scaffoldBackgroundColor: const Color(0xFF2E1A47),
       ),
       routerConfig: appRouter,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary, title: Text(widget.title)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

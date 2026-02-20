@@ -287,18 +287,32 @@ class _HypeScreenState extends State<HypeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.shortestSide >= 600 ? 120 : 56),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 60,
-                      child: CNButton(
-                        label: '    Invite Friends',
-                        icon: CNSymbol('person.badge.plus', size: 16),
-                        config: CNButtonConfig(style: CNButtonStyle.glass, imagePlacement: CNImagePlacement.leading),
-                        onPressed: () {
-                          SharePlus.instance.share(
-                            ShareParams(text: ShareStrings.inviteMessage, subject: ShareStrings.inviteTitle),
-                          );
-                        },
-                      ),
+                    Builder(
+                      builder: (buttonContext) {
+                        return SizedBox(
+                          height: 60,
+                          child: CNButton(
+                            label: '    Invite Friends',
+                            icon: CNSymbol('person.badge.plus', size: 16),
+                            config: CNButtonConfig(
+                              style: CNButtonStyle.glass,
+                              imagePlacement: CNImagePlacement.leading,
+                            ),
+                            onPressed: () {
+                              final box = buttonContext.findRenderObject() as RenderBox?;
+                              final rect = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+                              SharePlus.instance.share(
+                                ShareParams(
+                                  text: ShareStrings.inviteMessage,
+                                  subject: ShareStrings.inviteTitle,
+                                  sharePositionOrigin: rect,
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
                     SizedBox(

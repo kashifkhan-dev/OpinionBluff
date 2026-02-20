@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 
 class GameConfigScreen extends StatelessWidget {
   const GameConfigScreen({super.key});
@@ -56,7 +58,7 @@ class GameConfigScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Start Game Button
-            _buildStartGameButton(),
+            _buildStartGameButton(context),
             const SizedBox(height: 120), // Space for bottom nav
           ],
         ),
@@ -130,21 +132,53 @@ class GameConfigScreen extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildIconButton(Icons.remove, viewModel.decrementPlayers),
-                const SizedBox(width: 12),
+                CNButton.icon(
+                  icon: const CNSymbol('minus', size: 24),
+                  config: CNButtonConfig(style: CNButtonStyle.glass),
+                  onPressed: viewModel.decrementPlayers,
+                ),
+                const SizedBox(width: 16),
                 Text(
                   viewModel.players.toString(),
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(width: 12),
-                _buildIconButton(Icons.add, viewModel.incrementPlayers),
+                const SizedBox(width: 16),
+                CNButton.icon(
+                  icon: const CNSymbol('plus', size: 24),
+                  config: CNButtonConfig(style: CNButtonStyle.glass),
+                  onPressed: viewModel.incrementPlayers,
+                ),
               ],
             ),
           ),
           const Divider(color: Colors.white10),
-          _buildConfigRow(icon: Icons.timer_outlined, label: 'Duration', value: viewModel.duration, showChevron: true),
+          _buildConfigRow(
+            icon: Icons.timer_outlined,
+            label: 'Duration (${viewModel.durationUnit})',
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CNButton.icon(
+                  icon: const CNSymbol('minus', size: 24),
+                  config: CNButtonConfig(style: CNButtonStyle.glass),
+                  onPressed: viewModel.decrementDuration,
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  viewModel.durationValue,
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 16),
+                CNButton.icon(
+                  icon: const CNSymbol('plus', size: 24),
+                  config: CNButtonConfig(style: CNButtonStyle.glass),
+                  onPressed: viewModel.incrementDuration,
+                ),
+              ],
+            ),
+          ),
           const Divider(color: Colors.white10),
-          _buildConfigRow(icon: Icons.help_outline_rounded, label: 'Help', showChevron: true),
+          _buildConfigRow(icon: Icons.help_outline_rounded, label: 'How to Play?', showChevron: true),
         ]),
         const SizedBox(height: 16),
         _buildConfigGroup([
@@ -185,18 +219,10 @@ class GameConfigScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: const BoxDecoration(color: Colors.white10, shape: BoxShape.circle),
-        child: Icon(icon, color: Colors.white, size: 20),
-      ),
-    );
-  }
+  Widget _buildStartGameButton(BuildContext context) {
+    final configViewModel = context.read<GameConfigViewModel>();
+    final revealProvider = context.read<RevealProvider>();
 
-  Widget _buildStartGameButton() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
@@ -214,7 +240,10 @@ class GameConfigScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
             elevation: 0,
           ),
-          onPressed: () {},
+          onPressed: () {
+            revealProvider.initializeGame(configViewModel.playerNames);
+            context.push('/reveal');
+          },
           child: const Text(
             'Start Game',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 0.5),
