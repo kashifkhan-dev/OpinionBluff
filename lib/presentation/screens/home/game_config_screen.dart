@@ -193,7 +193,12 @@ class GameConfigScreen extends StatelessWidget {
             ),
           ),
           const Divider(color: Colors.white10),
-          _buildConfigRow(icon: Icons.help_outline_rounded, label: 'How to Play?', showChevron: true),
+          _buildConfigRow(
+            icon: Icons.help_outline_rounded,
+            label: 'How to Play?',
+            showChevron: true,
+            onTap: () => context.pushReplacement('/'),
+          ),
         ]),
         const SizedBox(height: 16),
         _buildConfigGroup([
