@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
@@ -31,7 +32,17 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(child: Container(color: const Color(0xFF7B1FA2))),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF070421), Color(0xFF000000)],
+                ),
+              ),
+            ),
+          ),
           SafeArea(
             child: Column(
               children: [
@@ -102,7 +113,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
           label: 'Proceed to Voting',
           config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
           onPressed: () {
-            // Future navigation
+            context.go('/voting');
           },
         ),
       ),
@@ -110,72 +121,28 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   }
 }
 
-class DiscussionPlayerCard extends StatefulWidget {
+class DiscussionPlayerCard extends StatelessWidget {
   final DiscussionPlayer player;
   final int totalDurationSeconds;
 
   const DiscussionPlayerCard({super.key, required this.player, required this.totalDurationSeconds});
 
-  @override
-  State<DiscussionPlayerCard> createState() => _DiscussionPlayerCardState();
-}
-
-class _DiscussionPlayerCardState extends State<DiscussionPlayerCard> with SingleTickerProviderStateMixin {
-  late AnimationController _progressController;
-
-  @override
-  void initState() {
-    super.initState();
-    _progressController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: widget.totalDurationSeconds),
-    );
-
-    if (widget.player.isActive) {
-      _progressController.forward(from: widget.player.progress);
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant DiscussionPlayerCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Sync duration if it changed
-    if (oldWidget.totalDurationSeconds != widget.totalDurationSeconds) {
-      _progressController.duration = Duration(seconds: widget.totalDurationSeconds);
-    }
-
-    if (widget.player.isActive) {
-      if (!_progressController.isAnimating) {
-        // Start or resume
-        _progressController.forward(from: widget.player.progress);
-      }
-    } else {
-      if (_progressController.isAnimating) {
-        _progressController.stop();
-      }
-      if (widget.player.hasCompleted) {
-        _progressController.value = 1.0;
-      } else {
-        _progressController.value = 0.0;
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _progressController.dispose();
-    super.dispose();
+  String _formatTime(double seconds) {
+    int total = seconds.toInt();
+    int m = total ~/ 60;
+    int s = total % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = widget.player.isActive;
-    final bool isCompleted = widget.player.hasCompleted;
+    final bool isActive = player.isActive;
+    final bool isCompleted = player.hasCompleted;
     final viewModel = context.read<DiscussionProvider>();
+    final double progress = player.getProgress(totalDurationSeconds);
 
     return GestureDetector(
-      onTap: () => viewModel.selectPlayer(widget.player.index),
+      onTap: () => viewModel.selectPlayer(player.index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -205,7 +172,7 @@ class _DiscussionPlayerCardState extends State<DiscussionPlayerCard> with Single
                     child: isCompleted
                         ? const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 28)
                         : Text(
-                            widget.player.name[0].toUpperCase(),
+                            player.name[0].toUpperCase(),
                             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                   ),
@@ -216,7 +183,7 @@ class _DiscussionPlayerCardState extends State<DiscussionPlayerCard> with Single
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.player.name,
+                        player.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -228,32 +195,38 @@ class _DiscussionPlayerCardState extends State<DiscussionPlayerCard> with Single
                     ],
                   ),
                 ),
-                if (isActive)
+                if (isActive) ...[
+                  Text(
+                    '${_formatTime(player.elapsedTime)} / ${_formatTime(totalDurationSeconds.toDouble())}',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   CNButton(
                     label: 'Skip',
                     config: CNButtonConfig(
                       style: CNButtonStyle.prominentGlass,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                     onPressed: () => viewModel.skip(),
                   ),
+                ],
               ],
             ),
-            if (isActive) ...[
+            if (isActive || isCompleted) ...[
               const SizedBox(height: 16),
-              AnimatedBuilder(
-                animation: _progressController,
-                builder: (context, child) {
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: _progressController.value,
-                      minHeight: 6,
-                      backgroundColor: Colors.white10,
-                      color: Colors.white,
-                    ),
-                  );
-                },
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 6,
+                  backgroundColor: Colors.white10,
+                  color: Colors.white,
+                ),
               ),
             ],
           ],
@@ -266,10 +239,10 @@ class _DiscussionPlayerCardState extends State<DiscussionPlayerCard> with Single
     String text = 'Waiting';
     Color color = Colors.white38;
 
-    if (widget.player.isActive) {
+    if (player.isActive) {
       text = 'Discussing';
       color = const Color(0xFF34C759);
-    } else if (widget.player.hasCompleted) {
+    } else if (player.hasCompleted) {
       text = 'Completed';
       color = Colors.white60;
     }

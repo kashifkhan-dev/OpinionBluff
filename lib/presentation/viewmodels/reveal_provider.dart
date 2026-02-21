@@ -2,9 +2,13 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:opinion_bluff/domain/entities/game_round.dart';
+import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
 
 class RevealProvider extends ChangeNotifier {
+  final OpinionRepository _repository = OpinionRepository();
   List<GamePlayer> _players = [];
+  GameRound? _currentRound;
   int _activePlayerIndex = 0;
 
   bool _isLoading = false;
@@ -12,10 +16,8 @@ class RevealProvider extends ChangeNotifier {
   double _progress = 0.0;
   Timer? _timer;
 
-  final String _currentTopic = "Remote work reduces creativity.";
-  final String _blufferTopic = "Remote work increases creativity.";
-
   List<GamePlayer> get players => _players;
+  GameRound? get currentRound => _currentRound;
   int get activePlayerIndex => _activePlayerIndex;
   bool get isLoading => _isLoading;
   bool get isSessionRevealed => _isSessionRevealed;
@@ -23,25 +25,29 @@ class RevealProvider extends ChangeNotifier {
   GamePlayer? get activePlayer => _players.isNotEmpty ? _players[_activePlayerIndex] : null;
   bool get allPlayersRevealed => _players.isNotEmpty && _players.every((p) => p.isRevealed);
 
-  void initializeGame(List<String> playerNames) {
+  Future<void> initializeGame(List<String> playerNames, String selectedPack) async {
     _players = [];
     _activePlayerIndex = 0;
     resetState();
 
+    final topics = await _repository.getTopicsForPack(selectedPack);
+    final shuffledTopics = List<String>.from(topics)..shuffle();
+
     final random = Random();
     final blufferIndex = random.nextInt(playerNames.length);
 
+    final List<PlayerRoundData> roundPlayers = [];
     for (int i = 0; i < playerNames.length; i++) {
       final isBluffer = i == blufferIndex;
-      _players.add(
-        GamePlayer(
-          index: i,
-          name: playerNames[i],
-          topic: isBluffer ? _blufferTopic : _currentTopic,
-          isBluffer: isBluffer,
-        ),
-      );
+      final topic = shuffledTopics[i];
+
+      roundPlayers.add(PlayerRoundData(playerIndex: i, topic: topic, isBluffer: isBluffer));
+
+      _players.add(GamePlayer(index: i, name: playerNames[i], topic: topic, isBluffer: isBluffer));
     }
+
+    _currentRound = GameRound(players: roundPlayers, packId: selectedPack);
+
     notifyListeners();
   }
 

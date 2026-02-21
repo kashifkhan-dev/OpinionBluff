@@ -5,6 +5,10 @@ import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
+import 'package:opinion_bluff/presentation/viewmodels/voting_provider.dart';
+import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
+
+import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
 
 void main() {
   runApp(
@@ -14,6 +18,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => GameConfigViewModel()),
         ChangeNotifierProvider(create: (_) => RevealProvider()),
         ChangeNotifierProvider(create: (_) => DiscussionProvider()),
+        ChangeNotifierProvider(create: (_) => VotingProvider()),
+        ChangeNotifierProvider(create: (_) => ResultProvider()),
+        ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
       ],
       child: const MyApp(),
     ),

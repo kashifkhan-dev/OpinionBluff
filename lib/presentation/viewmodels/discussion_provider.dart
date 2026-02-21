@@ -7,36 +7,37 @@ class DiscussionPlayer {
   final String name;
   bool hasCompleted;
   bool isActive;
-  double progress; // 0.0 -> 1.0
+  double elapsedTime; // in seconds
 
   DiscussionPlayer({
     required this.index,
     required this.name,
     this.hasCompleted = false,
     this.isActive = false,
-    this.progress = 0.0,
+    this.elapsedTime = 0.0,
   });
+
+  double getProgress(int totalDuration) => (elapsedTime / totalDuration).clamp(0.0, 1.0);
 }
 
 class DiscussionProvider extends ChangeNotifier {
   List<DiscussionPlayer> _players = [];
   int _activeIndex = -1;
   Timer? _timer;
-  int _durationSeconds = 60; // Default
+  int _durationSeconds = 60;
+  DateTime? _lastTick;
 
   List<DiscussionPlayer> get players => _players;
   int get activeIndex => _activeIndex;
   bool get allCompleted => _players.isNotEmpty && _players.every((p) => p.hasCompleted);
-
   int get durationSeconds => _durationSeconds;
 
   void initialize(List<GamePlayer> gamePlayers, String durationStr) {
     _players = gamePlayers.map((p) => DiscussionPlayer(index: p.index, name: p.name)).toList();
 
-    // Parse duration string (e.g., "3 minutes" or "60 seconds")
+    // Parse duration string
     final match = RegExp(r'\d+').firstMatch(durationStr);
     int value = match != null ? int.parse(match.group(0)!) : 60;
-
     if (durationStr.toLowerCase().contains('minute')) {
       _durationSeconds = value * 60;
     } else {
@@ -46,7 +47,6 @@ class DiscussionProvider extends ChangeNotifier {
     _activeIndex = -1;
     _stopTimer();
 
-    // Default Behavior: First player becomes active automatically
     if (_players.isNotEmpty) {
       startForPlayer(0);
     }
@@ -57,14 +57,12 @@ class DiscussionProvider extends ChangeNotifier {
 
     _stopTimer();
 
-    // Reset previous active player if any
     for (var p in _players) {
       p.isActive = false;
     }
 
     _activeIndex = index;
     _players[index].isActive = true;
-    _players[index].progress = 0.0;
     notifyListeners();
 
     _startTimer();
@@ -72,20 +70,22 @@ class DiscussionProvider extends ChangeNotifier {
 
   void _startTimer() {
     _stopTimer();
-    const tick = Duration(milliseconds: 100);
-    final totalTicks = (_durationSeconds * 1000) / 100;
-
-    _timer = Timer.periodic(tick, (timer) {
+    _lastTick = DateTime.now();
+    _timer = Timer.periodic(const Duration(milliseconds: 32), (timer) {
       if (_activeIndex == -1) {
-        timer.cancel();
+        _stopTimer();
         return;
       }
 
-      final player = _players[_activeIndex];
-      player.progress += 1.0 / totalTicks;
+      final now = DateTime.now();
+      final delta = now.difference(_lastTick!).inMilliseconds / 1000.0;
+      _lastTick = now;
 
-      if (player.progress >= 1.0) {
-        player.progress = 1.0;
+      final player = _players[_activeIndex];
+      player.elapsedTime += delta;
+
+      if (player.elapsedTime >= _durationSeconds) {
+        player.elapsedTime = _durationSeconds.toDouble();
         completeCurrent();
       } else {
         notifyListeners();
@@ -96,6 +96,7 @@ class DiscussionProvider extends ChangeNotifier {
   void _stopTimer() {
     _timer?.cancel();
     _timer = null;
+    _lastTick = null;
   }
 
   void skip() {
@@ -109,9 +110,8 @@ class DiscussionProvider extends ChangeNotifier {
     final player = _players[_activeIndex];
     player.hasCompleted = true;
     player.isActive = false;
-    player.progress = 1.0;
+    player.elapsedTime = _durationSeconds.toDouble();
 
-    // Activate next incomplete player automatically
     final nextIndex = _players.indexWhere((p) => !p.hasCompleted);
     if (nextIndex != -1) {
       startForPlayer(nextIndex);
@@ -123,9 +123,8 @@ class DiscussionProvider extends ChangeNotifier {
 
   void selectPlayer(int index) {
     if (index < 0 || index >= _players.length || _players[index].hasCompleted) return;
+    if (index == _activeIndex) return;
 
-    // If tapping the already active player, do nothing or reset?
-    // Manual selection overrides automatic sequence.
     startForPlayer(index);
   }
 

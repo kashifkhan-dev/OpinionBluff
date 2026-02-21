@@ -19,7 +19,17 @@ class TopicRevealScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Background (Vibrant Purple)
-          Positioned.fill(child: Container(color: const Color(0xFF7B1FA2))),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF070421), Color(0xFF000000)],
+                ),
+              ),
+            ),
+          ),
 
           SafeArea(
             child: Column(

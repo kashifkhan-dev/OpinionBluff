@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
+import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
 
 class GameConfigScreen extends StatelessWidget {
   const GameConfigScreen({super.key});
@@ -50,7 +51,7 @@ class GameConfigScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Unlock Banner
-            _buildUnlockBanner(),
+            _buildUnlockBanner(context),
             const SizedBox(height: 16),
 
             // Settings Cards
@@ -66,55 +67,69 @@ class GameConfigScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUnlockBanner() {
-    return LiquidGlassContainer(
-      config: LiquidGlassConfig(effect: CNGlassEffect.prominent, cornerRadius: 22, shape: CNGlassEffectShape.rect),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFF5E3A), Color(0xFFFF2D55)],
+  Widget _buildUnlockBanner(BuildContext context) {
+    final subProvider = context.watch<SubscriptionProvider>();
+    final isSubscribed = subProvider.isSubscribed;
+
+    return GestureDetector(
+      onTap: () => context.push('/topics'),
+      child: LiquidGlassContainer(
+        config: LiquidGlassConfig(effect: CNGlassEffect.prominent, cornerRadius: 22, shape: CNGlassEffectShape.rect),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isSubscribed
+                  ? [const Color(0xFF34C759), const Color(0xFF30D158)]
+                  : [const Color(0xFFFF5E3A), const Color(0xFFFF2D55)],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: (isSubscribed ? const Color(0xFF34C759) : const Color(0xFFFF2D55)).withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFFF2D55).withValues(alpha: 0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  isSubscribed ? Icons.verified_rounded : Icons.card_giftcard_rounded,
+                  color: Colors.orangeAccent,
+                  size: 28,
+                ),
               ),
-              child: const Icon(Icons.card_giftcard_rounded, color: Colors.orangeAccent, size: 28),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Unlock everything!',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Get all packs, create custom words, remove ads.',
-                    style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
-                  ),
-                ],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isSubscribed ? 'Premium Unlocked' : 'Unlock everything!',
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isSubscribed
+                          ? 'You have full access to all packs!'
+                          : 'Get all packs, create custom words, remove ads.',
+                      style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.white70, size: 24),
-          ],
+              const Icon(Icons.chevron_right, color: Colors.white70, size: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -182,7 +197,13 @@ class GameConfigScreen extends StatelessWidget {
         ]),
         const SizedBox(height: 16),
         _buildConfigGroup([
-          _buildConfigRow(icon: Icons.layers_rounded, label: 'Packs', value: viewModel.selectedPack, showChevron: true),
+          _buildConfigRow(
+            icon: Icons.layers_rounded,
+            label: 'Packs',
+            value: viewModel.selectedPack,
+            showChevron: true,
+            onTap: () => context.push('/topics'),
+          ),
         ]),
       ],
     );
@@ -194,20 +215,25 @@ class GameConfigScreen extends StatelessWidget {
     String? value,
     Widget? trailing,
     bool showChevron = false,
+    VoidCallback? onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white70),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(label, style: const TextStyle(color: Colors.white70)),
-          ),
-          if (value != null) ...[Text(value, style: const TextStyle(color: Colors.white))],
-          if (showChevron) ...[const SizedBox(width: 4), const Icon(Icons.chevron_right, color: Colors.white38)],
-          if (trailing != null) ...[trailing],
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white70),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(label, style: const TextStyle(color: Colors.white70)),
+            ),
+            if (value != null) ...[Text(value, style: const TextStyle(color: Colors.white))],
+            if (showChevron) ...[const SizedBox(width: 4), const Icon(Icons.chevron_right, color: Colors.white38)],
+            if (trailing != null) ...[trailing],
+          ],
+        ),
       ),
     );
   }
@@ -240,9 +266,11 @@ class GameConfigScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
             elevation: 0,
           ),
-          onPressed: () {
-            revealProvider.initializeGame(configViewModel.playerNames);
-            context.push('/reveal');
+          onPressed: () async {
+            await revealProvider.initializeGame(configViewModel.playerNames, configViewModel.selectedPack);
+            if (context.mounted) {
+              context.push('/reveal');
+            }
           },
           child: const Text(
             'Start Game',
