@@ -9,7 +9,7 @@ import 'package:opinion_bluff/presentation/screens/game/result_screen.dart';
 import 'package:opinion_bluff/presentation/screens/home/topics_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const OnboardingScreen()),
     GoRoute(path: '/home', builder: (context, state) => const MainScaffold()),

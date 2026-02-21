@@ -20,6 +20,7 @@ class _ResultScreenState extends State<ResultScreen> {
     final viewModel = context.watch<ResultProvider>();
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           Positioned.fill(
@@ -33,35 +34,36 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
             ),
           ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildWinnerHeader(viewModel),
-                  const SizedBox(height: 40),
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                // Top Safe Area Padding
+                SizedBox(height: MediaQuery.of(context).padding.top + 20),
+                _buildWinnerHeader(viewModel),
+                const SizedBox(height: 40),
 
-                  // Custom Bar Chart
-                  VoteBarChart(
-                    voteCounts: viewModel.voteCounts,
-                    sortedPlayerIndices: viewModel.sortedPlayerIndices,
-                    playerNames: viewModel.players.map((p) => p.name).toList(),
-                    blufferIndex: viewModel.blufferIndex,
-                  ),
+                // Custom Bar Chart
+                VoteBarChart(
+                  voteCounts: viewModel.voteCounts,
+                  sortedPlayerIndices: viewModel.sortedPlayerIndices,
+                  playerNames: viewModel.players.map((p) => p.name).toList(),
+                  blufferIndex: viewModel.blufferIndex,
+                ),
 
-                  const SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-                  // Votes Breakdown toggle
-                  _buildDetailsToggle(),
+                // Votes Breakdown toggle
+                _buildDetailsToggle(),
 
-                  if (_showDetails) ...[const SizedBox(height: 20), _buildBreakdownTable(viewModel)],
+                if (_showDetails) ...[const SizedBox(height: 20), _buildBreakdownTable(viewModel)],
 
-                  const SizedBox(height: 40),
-                  _buildHomeButton(context),
-                  const SizedBox(height: 40),
-                ],
-              ),
+                const SizedBox(height: 40),
+                _buildHomeButton(context),
+
+                // Bottom Safe Area Padding
+                SizedBox(height: MediaQuery.of(context).padding.bottom + 40),
+              ],
             ),
           ),
         ],
