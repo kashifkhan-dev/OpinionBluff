@@ -33,16 +33,6 @@ class PreferenceScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: -0.5),
           ),
         ),
-        // Back button positioned top left
-        Positioned(
-          top: 2,
-          left: 24,
-          child: CNButton.icon(
-            icon: CNSymbol('chevron.left', size: 20),
-            config: CNButtonConfig(style: CNButtonStyle.glass),
-            onPressed: onBack,
-          ),
-        ),
         // Main Content starting below the top section
         Padding(
           padding: EdgeInsets.fromLTRB(isIPad ? 64 : 24, 150, isIPad ? 64 : 24, 0),

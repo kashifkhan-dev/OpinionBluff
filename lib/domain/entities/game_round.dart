@@ -1,3 +1,5 @@
+enum TopicMode { same, mixed }
+
 class PlayerRoundData {
   final int playerIndex;
   final String topic;
@@ -9,6 +11,13 @@ class PlayerRoundData {
 class GameRound {
   final List<PlayerRoundData> players;
   final String packId;
+  final TopicMode topicMode;
+  final String punishment;
 
-  GameRound({required this.players, required this.packId});
+  GameRound({
+    required this.players,
+    required this.packId,
+    this.topicMode = TopicMode.same,
+    this.punishment = 'Do 10 push-ups',
+  });
 }

@@ -41,6 +41,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 // Top Safe Area Padding
                 SizedBox(height: MediaQuery.of(context).padding.top + 20),
                 _buildWinnerHeader(viewModel),
+                const SizedBox(height: 16),
+                _buildPunishmentCard(viewModel.punishment, viewModel.isGroupWinner),
                 const SizedBox(height: 40),
 
                 // Custom Bar Chart
@@ -92,6 +94,54 @@ class _ResultScreenState extends State<ResultScreen> {
           style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ],
+    );
+  }
+
+  Widget _buildPunishmentCard(String punishment, bool groupWins) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: LiquidGlassContainer(
+        config: LiquidGlassConfig(effect: CNGlassEffect.regular, cornerRadius: 24, shape: CNGlassEffectShape.rect),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFFFF3B30).withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Color(0xFFFF3B30), size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'THE PUNISHMENT',
+                    style: TextStyle(
+                      color: Color(0xFFFF3B30),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                punishment,
+                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                groupWins ? 'The Bluffer must pay the price!' : 'The Group must pay the price!',
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

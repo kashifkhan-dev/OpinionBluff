@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
+import 'package:opinion_bluff/domain/entities/game_round.dart';
+import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
 import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
 
 class GameConfigScreen extends StatelessWidget {
@@ -72,7 +74,7 @@ class GameConfigScreen extends StatelessWidget {
     final isSubscribed = subProvider.isSubscribed;
 
     return GestureDetector(
-      onTap: () => context.push('/topics'),
+      onTap: () => _showSubscriptionDialog(context),
       child: LiquidGlassContainer(
         config: LiquidGlassConfig(effect: CNGlassEffect.prominent, cornerRadius: 22, shape: CNGlassEffectShape.rect),
         child: Container(
@@ -83,11 +85,11 @@ class GameConfigScreen extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: isSubscribed
                   ? [const Color(0xFF34C759), const Color(0xFF30D158)]
-                  : [const Color(0xFFFF5E3A), const Color(0xFFFF2D55)],
+                  : [const Color(0xFF00C7FF), const Color(0xFF007AFF)],
             ),
             boxShadow: [
               BoxShadow(
-                color: (isSubscribed ? const Color(0xFF34C759) : const Color(0xFFFF2D55)).withValues(alpha: 0.3),
+                color: (isSubscribed ? const Color(0xFF34C759) : const Color(0xFF007AFF)).withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               ),
@@ -104,7 +106,7 @@ class GameConfigScreen extends StatelessWidget {
                 ),
                 child: Icon(
                   isSubscribed ? Icons.verified_rounded : Icons.card_giftcard_rounded,
-                  color: Colors.orangeAccent,
+                  color: Colors.white,
                   size: 28,
                 ),
               ),
@@ -197,20 +199,57 @@ class GameConfigScreen extends StatelessWidget {
             icon: Icons.help_outline_rounded,
             label: 'How to Play?',
             showChevron: true,
-            onTap: () => context.pushReplacement('/'),
+            onTap: () => context.push('/how-to-play'),
           ),
         ]),
         const SizedBox(height: 16),
         _buildConfigGroup([
-          _buildConfigRow(
-            icon: Icons.layers_rounded,
-            label: 'Packs',
-            value: viewModel.selectedPack,
-            showChevron: true,
-            onTap: () => context.push('/topics'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Topic Mode',
+                  style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                CNSegmentedControl(
+                  labels: const ['Same Topic', 'Mixed Topic'],
+                  selectedIndex: viewModel.topicMode == TopicMode.same ? 0 : 1,
+                  onValueChanged: (i) => viewModel.updateTopicMode(i == 0 ? TopicMode.same : TopicMode.mixed),
+                  color: const Color(0xFFFF3B30),
+                ),
+              ],
+            ),
           ),
+          if (viewModel.topicMode == TopicMode.same) ...[
+            const Divider(color: Colors.white10),
+            _buildPackSelectionRow(viewModel),
+          ],
         ]),
       ],
+    );
+  }
+
+  Widget _buildPackSelectionRow(GameConfigViewModel viewModel) {
+    return FutureBuilder<List<TopicPack>>(
+      future: OpinionRepository().loadPacks(),
+      builder: (context, snapshot) {
+        final packs = snapshot.data ?? [];
+        return _buildConfigRow(
+          icon: Icons.layers_rounded,
+          label: 'Topics Related to: ',
+          trailing: CNPopupMenuButton(
+            buttonLabel: viewModel.selectedPack,
+            buttonStyle: CNButtonStyle.glass,
+            items: packs.map((p) => CNPopupMenuItem(label: p.title)).toList(),
+            onSelected: (index) {
+              viewModel.updatePack(packs[index].title);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -272,7 +311,12 @@ class GameConfigScreen extends StatelessWidget {
             elevation: 0,
           ),
           onPressed: () async {
-            await revealProvider.initializeGame(configViewModel.playerNames, configViewModel.selectedPack);
+            await revealProvider.initializeGame(
+              configViewModel.playerNames,
+              configViewModel.selectedPack,
+              configViewModel.topicMode,
+              configViewModel.selectedPunishment,
+            );
             if (context.mounted) {
               context.push('/reveal');
             }
@@ -281,6 +325,159 @@ class GameConfigScreen extends StatelessWidget {
             'Start Game',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 0.5),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSubscriptionDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      barrierColor: Colors.black.withAlpha(200),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+          child: FadeTransition(
+            opacity: animation,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: LiquidGlassContainer(
+                  config: LiquidGlassConfig(
+                    effect: CNGlassEffect.prominent,
+                    cornerRadius: 32,
+                    shape: CNGlassEffectShape.rect,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: Colors.white.withAlpha(30)),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: const Icon(Icons.close, color: Colors.white38, size: 24),
+                            ),
+                          ],
+                        ),
+                        const Icon(Icons.auto_awesome_rounded, color: Color(0xFF00C7FF), size: 48),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Unlock All Packs',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Access every topic pack and remove restrictions.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        _buildSubscriptionOption(
+                          context,
+                          title: '3-Day Free Trial',
+                          subtitle: '3 days free, then annual subscription',
+                          isPrimary: true,
+                          onTap: () {
+                            context.read<SubscriptionProvider>().subscribe(SubscriptionPlan.trial);
+                            Navigator.pop(context);
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        _buildSubscriptionOption(
+                          context,
+                          title: 'Weekly Plan',
+                          subtitle: '\$5 per week',
+                          isPrimary: false,
+                          onTap: () {
+                            context.read<SubscriptionProvider>().subscribe(SubscriptionPlan.weekly);
+                            Navigator.pop(context);
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        TextButton(
+                          onPressed: () {
+                            context.read<SubscriptionProvider>().restorePurchase();
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Restore Purchase',
+                            style: TextStyle(color: Colors.white38, fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSubscriptionOption(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required bool isPrimary,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+        decoration: BoxDecoration(
+          color: isPrimary ? const Color(0xFF007AFF) : Colors.white.withAlpha(20),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: isPrimary
+              ? [BoxShadow(color: const Color(0xFF007AFF).withAlpha(100), blurRadius: 20, offset: const Offset(0, 8))]
+              : null,
+        ),
+        child: Column(
+          children: [
+            Text(
+              isPrimary ? 'Start Free Trial' : 'Weekly \$5',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                color: isPrimary ? Colors.white70 : Colors.white38,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,27 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-
-// --- MOCK MODELS FOR DEMO ---
-enum AppLanguage { english, french, spanish }
-
-class LocaleViewModel extends ChangeNotifier {
-  AppLanguage _language = AppLanguage.english;
-  AppLanguage get language => _language;
-
-  void setLanguage(AppLanguage lang) {
-    _language = lang;
-    notifyListeners();
-  }
-}
-
-class AppColors {
-  final Color card = Colors.white.withAlpha(20);
-  final Color border = Colors.white.withAlpha(30);
-  final Color surface = Colors.white.withAlpha(10);
-  final Color textPrimary = Colors.white;
-}
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/presentation/widgets/app_colors.dart';
 
 class AppLocalizations {
   String get language => 'Language';
@@ -30,7 +14,6 @@ class AppLocalizations {
   String get spanish => 'Spanish';
   String get change => 'Change';
 }
-// ----------------------------
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -71,6 +54,25 @@ class SettingsScreen extends StatelessWidget {
                   _buildLanguageTile(context, colors, localeVm, l10n),
 
                   const SizedBox(height: 32),
+                  _buildSettingsTile(
+                    icon: Icons.help_outline_rounded,
+                    label: 'How To Play',
+                    onTap: () => context.push('/how-to-play'),
+                    colors: colors,
+                  ),
+
+                  const SizedBox(height: 32),
+                  const Text('Punishments', style: TextStyle(color: Colors.white70, fontSize: 16)),
+                  const SizedBox(height: 16),
+                  _buildPunishmentsList(context, viewModel, colors),
+                  const SizedBox(height: 12),
+                  CNButton(
+                    label: '+ Add Custom Punishment',
+                    config: CNButtonConfig(style: CNButtonStyle.tinted),
+                    onPressed: () => _showAddPunishmentDialog(context, viewModel),
+                  ),
+
+                  const SizedBox(height: 32),
                   const Text('Player Names', style: TextStyle(color: Colors.white70, fontSize: 16)),
                   const SizedBox(height: 16),
                   ListView.separated(
@@ -79,28 +81,27 @@ class SettingsScreen extends StatelessWidget {
                     itemCount: viewModel.playerNames.length,
                     separatorBuilder: (context, index) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      return LiquidGlassContainer(
-                        config: LiquidGlassConfig(
-                          effect: CNGlassEffect.regular,
-                          cornerRadius: 16,
-                          shape: CNGlassEffectShape.rect,
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: colors.card,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: colors.border),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          child: TextField(
-                            style: const TextStyle(color: Colors.white, fontSize: 16),
-                            decoration: InputDecoration(
-                              icon: Icon(Icons.person_outline, color: Colors.white.withValues(alpha: 0.5)),
-                              border: InputBorder.none,
-                              hintText: 'Enter name...',
-                              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
-                            ),
-                            onChanged: (value) => viewModel.updatePlayerName(index, value),
-                            controller: TextEditingController(text: viewModel.playerNames[index])
-                              ..selection = TextSelection.fromPosition(
-                                TextPosition(offset: viewModel.playerNames[index].length),
-                              ),
+                        child: TextField(
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.person_outline, color: Colors.white.withValues(alpha: 0.5)),
+                            border: InputBorder.none,
+                            hintText: 'Enter name...',
+                            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                            suffixIcon: const Icon(Icons.edit_note_rounded, color: Colors.white24, size: 22),
                           ),
+                          onChanged: (value) => viewModel.updatePlayerName(index, value),
+                          controller: TextEditingController(text: viewModel.playerNames[index])
+                            ..selection = TextSelection.fromPosition(
+                              TextPosition(offset: viewModel.playerNames[index].length),
+                            ),
                         ),
                       );
                     },
@@ -141,17 +142,137 @@ class SettingsScreen extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          _buildLanguageMenu(context, colors, localeVm, l10n),
+          _buildLanguageMenu(context, colors, localeVm),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageMenu(BuildContext context, AppColors colors, LocaleViewModel localeVm, AppLocalizations l10n) {
+  Widget _buildSettingsTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required AppColors colors,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: colors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(10)),
+              alignment: Alignment.center,
+              child: Icon(icon, color: Colors.blue, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 17, color: colors.textPrimary, fontWeight: FontWeight.w500),
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.white24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPunishmentsList(BuildContext context, GameConfigViewModel viewModel, AppColors colors) {
+    return Column(
+      children: viewModel.allPunishments.map((p) {
+        final isSelected = viewModel.selectedPunishment == p;
+        final isCustom = viewModel.customPunishments.contains(p);
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: GestureDetector(
+            onTap: () => viewModel.updatePunishment(p),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFFF3B30).withValues(alpha: 0.1) : colors.card,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: isSelected ? const Color(0xFFFF3B30) : colors.border),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      p,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isSelected ? Colors.white : colors.textPrimary,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  if (isSelected) const Icon(Icons.check_circle, color: Color(0xFFFF3B30), size: 20),
+                  if (isCustom) ...[
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () => viewModel.deleteCustomPunishment(p),
+                      child: const Icon(Icons.delete_outline, color: Colors.white24, size: 20),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  void _showAddPunishmentDialog(BuildContext context, GameConfigViewModel viewModel) {
+    final controller = TextEditingController();
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Add Punishment'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: CupertinoTextField(
+            controller: controller,
+            placeholder: 'Type punishment here...',
+            style: const TextStyle(color: Colors.white),
+            cursorColor: const Color(0xFFFF3B30),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(child: const Text('Cancel'), onPressed: () => Navigator.pop(context)),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('Add', style: TextStyle(color: Color(0xFFFF3B30))),
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                viewModel.addCustomPunishment(controller.text);
+                Navigator.pop(context);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageMenu(BuildContext context, AppColors colors, LocaleViewModel localeVm) {
     final items = [
-      CNPopupMenuItem(label: '🇺🇸 ${l10n.english}', icon: const CNSymbol('textformat', size: 12)),
-      CNPopupMenuItem(label: '🇫🇷 ${l10n.french}', icon: const CNSymbol('textformat', size: 12)),
-      CNPopupMenuItem(label: '🇪🇸 ${l10n.spanish}', icon: const CNSymbol('textformat', size: 12)),
+      const CNPopupMenuItem(label: '🇺🇸 English', icon: CNSymbol('textformat', size: 12)),
+      const CNPopupMenuItem(label: '🇫🇷 French', icon: CNSymbol('textformat', size: 12)),
+      const CNPopupMenuItem(label: '🇪🇸 Spanish', icon: CNSymbol('textformat', size: 12)),
     ];
 
     return CNPopupMenuButton(

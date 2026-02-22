@@ -219,7 +219,10 @@ class _VotingScreenState extends State<VotingScreen> {
             config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
             onPressed: () {
               final resultProvider = context.read<ResultProvider>();
-              resultProvider.calculateResults(viewModel.players, viewModel.votes);
+              final revealProvider = context.read<RevealProvider>();
+              final punishment = revealProvider.currentRound?.punishment ?? '';
+
+              resultProvider.calculateResults(viewModel.players, viewModel.votes, punishment);
               context.go('/results');
             },
           ),

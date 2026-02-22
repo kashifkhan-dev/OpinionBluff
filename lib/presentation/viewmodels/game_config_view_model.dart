@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:opinion_bluff/domain/entities/game_round.dart';
 
 class GameConfigViewModel extends ChangeNotifier {
   int _players = 3;
   String _selectedPack = 'Daily Life';
   String _gameMode = 'Classic';
-  List<String> _playerNames = ['Player 1', 'Player 2', 'Player 3'];
+  TopicMode _topicMode = TopicMode.same;
+  List<String> _playerNames = ['Anna', 'Luis', 'Mark'];
+
+  // Punishments
+  final List<String> _predefinedPunishments = [
+    'Do 10 push-ups',
+    'Pay for dinner',
+    'Call your mom or dad and prank them',
+    'Sing a song',
+    'Dance for 30 seconds',
+  ];
+  final List<String> _customPunishments = [];
+  String _selectedPunishment = 'Do 10 push-ups';
 
   int _durationIndex = 4; // Index for '3 minutes'
   final List<String> _durationOptions = [
@@ -19,11 +32,15 @@ class GameConfigViewModel extends ChangeNotifier {
   int get players => _players;
   String get selectedPack => _selectedPack;
   String get duration => _durationOptions[_durationIndex];
+  String get selectedPunishment => _selectedPunishment;
+  List<String> get allPunishments => [..._predefinedPunishments, ..._customPunishments];
+  List<String> get customPunishments => _customPunishments;
 
   String get durationValue => _durationOptions[_durationIndex].split(' ')[0];
   String get durationUnit => _durationOptions[_durationIndex].contains('second') ? 'sec' : 'min';
 
   String get gameMode => _gameMode;
+  TopicMode get topicMode => _topicMode;
   List<String> get playerNames => _playerNames;
 
   void incrementDuration() {
@@ -78,6 +95,32 @@ class GameConfigViewModel extends ChangeNotifier {
 
   void updateGameMode(String value) {
     _gameMode = value;
+    notifyListeners();
+  }
+
+  void updateTopicMode(TopicMode mode) {
+    _topicMode = mode;
+    notifyListeners();
+  }
+
+  void updatePunishment(String punishment) {
+    _selectedPunishment = punishment;
+    notifyListeners();
+  }
+
+  void addCustomPunishment(String punishment) {
+    if (punishment.isNotEmpty && !_customPunishments.contains(punishment)) {
+      _customPunishments.add(punishment);
+      _selectedPunishment = punishment;
+      notifyListeners();
+    }
+  }
+
+  void deleteCustomPunishment(String punishment) {
+    _customPunishments.remove(punishment);
+    if (_selectedPunishment == punishment) {
+      _selectedPunishment = _predefinedPunishments.first;
+    }
     notifyListeners();
   }
 }

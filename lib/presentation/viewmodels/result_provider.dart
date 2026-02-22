@@ -10,6 +10,7 @@ class ResultProvider extends ChangeNotifier {
   List<int> _sortedPlayerIndices = [];
   List<Vote> _allVotes = [];
   List<GamePlayer> _players = [];
+  String _punishment = '';
 
   Map<int, int> get voteCounts => _voteCounts;
   int get blufferIndex => _blufferIndex;
@@ -17,8 +18,10 @@ class ResultProvider extends ChangeNotifier {
   List<int> get sortedPlayerIndices => _sortedPlayerIndices;
   List<Vote> get allVotes => _allVotes;
   List<GamePlayer> get players => _players;
+  String get punishment => _punishment;
 
-  void calculateResults(List<GamePlayer> players, List<Vote> votes) {
+  void calculateResults(List<GamePlayer> players, List<Vote> votes, String punishment) {
+    _punishment = punishment;
     _players = players;
     _allVotes = votes;
     _voteCounts = {};

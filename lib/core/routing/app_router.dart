@@ -8,6 +8,8 @@ import 'package:opinion_bluff/presentation/screens/game/result_screen.dart';
 
 import 'package:opinion_bluff/presentation/screens/home/topics_screen.dart';
 
+import 'package:opinion_bluff/presentation/screens/onboarding/how_to_play_screen.dart';
+
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
@@ -18,5 +20,6 @@ final appRouter = GoRouter(
     GoRoute(path: '/voting', builder: (context, state) => const VotingScreen()),
     GoRoute(path: '/results', builder: (context, state) => const ResultScreen()),
     GoRoute(path: '/topics', builder: (context, state) => const TopicsScreen()),
+    GoRoute(path: '/how-to-play', builder: (context, state) => const HowToPlayScreen(isStandalone: true)),
   ],
 );

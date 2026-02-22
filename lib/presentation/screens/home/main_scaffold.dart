@@ -20,6 +20,10 @@ class _MainScaffoldState extends State<MainScaffold> {
     final bool isIPad = MediaQuery.of(context).size.shortestSide >= 600;
 
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           // Background Gradient
@@ -36,6 +40,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
 
           SafeArea(
+            bottom: false,
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: isIPad ? 600 : double.infinity),

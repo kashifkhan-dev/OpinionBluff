@@ -25,28 +25,44 @@ class RevealProvider extends ChangeNotifier {
   GamePlayer? get activePlayer => _players.isNotEmpty ? _players[_activePlayerIndex] : null;
   bool get allPlayersRevealed => _players.isNotEmpty && _players.every((p) => p.isRevealed);
 
-  Future<void> initializeGame(List<String> playerNames, String selectedPack) async {
+  Future<void> initializeGame(List<String> playerNames, String selectedPack, TopicMode mode, String punishment) async {
     _players = [];
     _activePlayerIndex = 0;
     resetState();
 
-    final topics = await _repository.getTopicsForPack(selectedPack);
-    final shuffledTopics = List<String>.from(topics)..shuffle();
-
     final random = Random();
+    List<String> selectedTopics = [];
+
+    if (mode == TopicMode.same) {
+      final topics = await _repository.getTopicsForPack(selectedPack);
+      final shuffledTopics = List<String>.from(topics)..shuffle();
+      selectedTopics = shuffledTopics.take(playerNames.length).toList();
+    } else {
+      // Mixed Topic Mode: Randomly select packs per player, ensure uniqueness
+      final allPacks = await _repository.loadPacks();
+      final Set<String> uniqueTopics = {};
+
+      while (uniqueTopics.length < playerNames.length) {
+        final randomPack = allPacks[random.nextInt(allPacks.length)];
+        final randomTopic = randomPack.topics[random.nextInt(randomPack.topics.length)];
+        uniqueTopics.add(randomTopic);
+      }
+      selectedTopics = uniqueTopics.toList();
+    }
+
     final blufferIndex = random.nextInt(playerNames.length);
 
     final List<PlayerRoundData> roundPlayers = [];
     for (int i = 0; i < playerNames.length; i++) {
       final isBluffer = i == blufferIndex;
-      final topic = shuffledTopics[i];
+      final topic = selectedTopics[i];
 
       roundPlayers.add(PlayerRoundData(playerIndex: i, topic: topic, isBluffer: isBluffer));
 
       _players.add(GamePlayer(index: i, name: playerNames[i], topic: topic, isBluffer: isBluffer));
     }
 
-    _currentRound = GameRound(players: roundPlayers, packId: selectedPack);
+    _currentRound = GameRound(players: roundPlayers, packId: selectedPack, topicMode: mode, punishment: punishment);
 
     notifyListeners();
   }
