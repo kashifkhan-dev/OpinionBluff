@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
 import 'package:opinion_bluff/presentation/widgets/vote_bar_chart.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -75,6 +76,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
   Widget _buildWinnerHeader(ResultProvider viewModel) {
     final bool groupWins = viewModel.isGroupWinner;
+    final l10n = context.watch<LocaleViewModel>().l10n;
 
     return Column(
       children: [
@@ -85,12 +87,12 @@ class _ResultScreenState extends State<ResultScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          groupWins ? 'Group Wins!' : 'Bluffer Wins!',
+          groupWins ? l10n.get('group_wins') : l10n.get('bluffer_wins'),
           style: const TextStyle(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 8),
         Text(
-          groupWins ? 'The Bluffer was caught.' : 'The Bluffer was too convincing.',
+          groupWins ? l10n.get('bluffer_caught_desc') : l10n.get('bluffer_convincing_desc'),
           style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
         ),
       ],
@@ -98,6 +100,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildPunishmentCard(String punishment, bool groupWins) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: LiquidGlassContainer(
@@ -111,14 +114,14 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Color(0xFFFF3B30), size: 20),
-                  SizedBox(width: 8),
+                  const Icon(Icons.warning_amber_rounded, color: Color(0xFFFF3B30), size: 20),
+                  const SizedBox(width: 8),
                   Text(
-                    'THE PUNISHMENT',
-                    style: TextStyle(
+                    l10n.get('the_punishment_label'),
+                    style: const TextStyle(
                       color: Color(0xFFFF3B30),
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
@@ -129,13 +132,13 @@ class _ResultScreenState extends State<ResultScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                punishment,
+                punishment.startsWith('punishment_') ? l10n.get(punishment) : punishment,
                 style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                groupWins ? 'The Bluffer must pay the price!' : 'The Group must pay the price!',
+                groupWins ? l10n.get('bluffer_pay_price') : l10n.get('group_pay_price'),
                 style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14, fontWeight: FontWeight.w500),
               ),
             ],
@@ -146,6 +149,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildDetailsToggle() {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return TextButton(
       onPressed: () {
         setState(() {
@@ -153,7 +157,7 @@ class _ResultScreenState extends State<ResultScreen> {
         });
       },
       child: Text(
-        _showDetails ? 'Hide Vote Details' : 'Show Vote Details',
+        _showDetails ? l10n.get('hide_vote_details') : l10n.get('show_vote_details'),
         style: const TextStyle(
           color: Colors.white70,
           fontSize: 14,
@@ -165,6 +169,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildBreakdownTable(ResultProvider viewModel) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       decoration: BoxDecoration(
@@ -175,7 +180,11 @@ class _ResultScreenState extends State<ResultScreen> {
       child: Column(
         children: [
           // Header Row
-          _buildTableRow(['Player', 'Voted For', 'Result'], isHeader: true),
+          _buildTableRow([
+            l10n.get('player_table_header'),
+            l10n.get('voted_for_table_header'),
+            l10n.get('result_table_header'),
+          ], isHeader: true),
           const Divider(color: Colors.white10, height: 1),
           // Data Rows
           ...viewModel.allVotes.asMap().entries.map((entry) {
@@ -189,7 +198,11 @@ class _ResultScreenState extends State<ResultScreen> {
               color: index.isEven ? Colors.transparent : Colors.white.withValues(alpha: 0.03),
               child: Column(
                 children: [
-                  _buildTableRow([voter.name, votedFor.name, isCorrect ? 'Correct' : 'Wrong'], isCorrect: isCorrect),
+                  _buildTableRow([
+                    voter.name,
+                    votedFor.name,
+                    isCorrect ? l10n.get('correct_vote') : l10n.get('wrong_vote'),
+                  ], isCorrect: isCorrect),
                   if (vote != viewModel.allVotes.last) const Divider(color: Colors.white10, height: 1),
                 ],
               ),
@@ -243,14 +256,15 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildHomeButton(BuildContext context) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: SizedBox(
         width: double.infinity,
         height: 60,
         child: CNButton(
-          label: 'Back to Lobby',
-          config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+          label: l10n.get('back_to_lobby'),
+          config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
           onPressed: () => context.go('/home'),
         ),
       ),

@@ -1,17 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-
-class TopicPack {
-  final String id;
-  final String title;
-  final List<String> topics;
-
-  TopicPack({required this.id, required this.title, required this.topics});
-
-  factory TopicPack.fromJson(Map<String, dynamic> json) {
-    return TopicPack(id: json['id'], title: json['title'], topics: List<String>.from(json['topics']));
-  }
-}
+import 'package:opinion_bluff/domain/entities/topic_pack.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class OpinionRepository {
   Future<List<TopicPack>> loadPacks() async {
@@ -21,9 +11,9 @@ class OpinionRepository {
     return packsJson.map((json) => TopicPack.fromJson(json)).toList();
   }
 
-  Future<List<String>> getTopicsForPack(String packTitle) async {
+  Future<List<String>> getTopicsForPack(String packId, AppLanguage language) async {
     final packs = await loadPacks();
-    final pack = packs.firstWhere((p) => p.title.toLowerCase() == packTitle.toLowerCase(), orElse: () => packs.first);
-    return pack.topics;
+    final pack = packs.firstWhere((p) => p.id == packId, orElse: () => packs.first);
+    return pack.topics.map((t) => t.getForLanguage(language)).toList();
   }
 }

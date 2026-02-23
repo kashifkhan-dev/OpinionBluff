@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:opinion_bluff/domain/repositories/review_repository.dart';
 import 'package:opinion_bluff/presentation/screens/onboarding/welcome_screen.dart';
 import 'package:opinion_bluff/presentation/screens/onboarding/preference_screen.dart';
-import 'package:opinion_bluff/presentation/screens/onboarding/names_screen.dart';
-import 'package:opinion_bluff/presentation/screens/onboarding/punishment_screen.dart';
 import 'package:opinion_bluff/presentation/screens/onboarding/how_to_play_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
@@ -65,8 +63,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     WelcomeScreen(onContinue: () => _nextPage(onboardingVm)),
                     PreferenceScreen(onContinue: () => _nextPage(onboardingVm), onBack: () => _prevPage(onboardingVm)),
-                    NamesScreen(onContinue: () => _nextPage(onboardingVm), onBack: () => _prevPage(onboardingVm)),
-                    PunishmentScreen(onContinue: () => _nextPage(onboardingVm), onBack: () => _prevPage(onboardingVm)),
                     HowToPlayScreen(
                       onComplete: () async {
                         onboardingVm.setStep(OnboardingStep.finalizing);

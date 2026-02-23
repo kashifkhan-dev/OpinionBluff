@@ -1,1 +1,1 @@
-enum OnboardingStep { welcome, preferences, names, punishments, howToPlay, finalizing }
+enum OnboardingStep { welcome, preferences, howToPlay, finalizing }

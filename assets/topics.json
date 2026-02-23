@@ -2,150 +2,582 @@
   "packs": [
     {
       "id": "daily_life",
-      "title": "Daily Life",
+      "title": {
+        "en": "Daily Life",
+        "fr": "Vie Quotidienne",
+        "es": "Vida Diaria"
+      },
       "topics": [
-        "Morning workouts are better than evening workouts.",
-        "Cooking at home is always better than ordering food.",
-        "Making the bed every morning is a waste of time.",
-        "Physical books are superior to e-readers.",
-        "Waking up at 5 AM is the only way to be productive.",
-        "Cold showers are better than hot showers.",
-        "Living in a city is better than living in the countryside.",
-        "Social media does more harm than good to daily productivity.",
-        "Minimalism is the key to a happy life.",
-        "Public transport is better than owning a car.",
-        "Paper planners are better than digital calendars.",
-        "Working from a cafe is more productive than working from home.",
-        "Ironing clothes is a completely unnecessary chore.",
-        "Listening to podcasts is better than listening to music while working.",
-        "A messy desk is a sign of a creative mind.",
-        "Grocery shopping in person is better than online delivery.",
-        "Smartwatches are more distracting than they are helpful.",
-        "Drinking 2 liters of water a day is overrated.",
-        "Napping during the day makes you less productive.",
-        "Using a physical alarm clock is better than using a phone.",
-        "Handwriting notes is better for memory than typing.",
-        "Living with roommates is better than living alone.",
-        "A 4-day work week should be the global standard.",
-        "To-do lists actually increase stress rather than reducing it.",
-        "Email is an outdated form of communication.",
-        "Casual dress codes at work decrease professionalism.",
-        "Subscription services are a drain on personal finances.",
-        "Everyone should learn to repair their own clothes.",
-        "Gardening is the most relaxing hobby.",
-        "Taking photos of everything ruins the actual experience."
+        {
+          "en": "Morning workouts are better than evening workouts.",
+          "fr": "Les entraînements du matin sont meilleurs que ceux du soir.",
+          "es": "Los entrenamientos matutinos son mejores que los vespertinos."
+        },
+        {
+          "en": "Cooking at home is always better than ordering food.",
+          "fr": "Cuisiner à la maison est toujours mieux que de commander.",
+          "es": "Cocinar en casa siempre es mejor que pedir comida."
+        },
+        {
+          "en": "Making the bed every morning is a waste of time.",
+          "fr": "Faire son lit tous les matins est une perte de temps.",
+          "es": "Hacer la cama todas las mañanas es una pérdida de tiempo."
+        },
+        {
+          "en": "Physical books are superior to e-readers.",
+          "fr": "Les livres physiques sont supérieurs aux liseuses.",
+          "es": "Los libros físicos son superiores a los lectores electrónicos."
+        },
+        {
+          "en": "Waking up at 5 AM is the only way to be productive.",
+          "fr": "Se réveiller à 5 heures du matin est le seul moyen d'être productif.",
+          "es": "Despertarse a las 5 de la mañana es la única forma de ser productivo."
+        },
+        {
+          "en": "Cold showers are better than hot showers.",
+          "fr": "Les douches froides sont meilleures que les douches chaudes.",
+          "es": "Las duchas frías son mejores que las duchas calientes."
+        },
+        {
+          "en": "Living in a city is better than living in the countryside.",
+          "fr": "Vivre en ville est mieux que vivre à la campagne.",
+          "es": "Vivir en la ciudad es mejor que vivir en el campo."
+        },
+        {
+          "en": "Social media does more harm than good to daily productivity.",
+          "fr": "Les réseaux sociaux font plus de mal que de bien à la productivité quotidienne.",
+          "es": "Las redes sociales hacen más daño que bien a la productividad diaria."
+        },
+        {
+          "en": "Minimalism is the key to a happy life.",
+          "fr": "Le minimalisme est la clé d'une vie heureuse.",
+          "es": "El minimalismo es la clave para una vida feliz."
+        },
+        {
+          "en": "Public transport is better than owning a car.",
+          "fr": "Les transports en commun sont préférables à la possession d'une voiture.",
+          "es": "El transporte público es mejor que tener un coche."
+        },
+        {
+          "en": "Paper planners are better than digital calendars.",
+          "fr": "Les agendas papier sont meilleurs que les calendriers numériques.",
+          "es": "Las agendas de papel son mejores que los calendarios digitales."
+        },
+        {
+          "en": "Working from a cafe is more productive than working from home.",
+          "fr": "Travailler dans un café est plus productif que de travailler à domicile.",
+          "es": "Trabajar desde una cafetería es más productivo que trabajar desde casa."
+        },
+        {
+          "en": "Ironing clothes is a completely unnecessary chore.",
+          "fr": "Repasser les vêtements est une tâche totalement inutile.",
+          "es": "Planchar la ropa es una tarea completamente innecesaria."
+        },
+        {
+          "en": "Listening to podcasts is better than listening to music while working.",
+          "fr": "Écouter des podcasts est mieux qu'écouter de la musique en travaillant.",
+          "es": "Escuchar podcasts es mejor que escuchar música mientras trabajas."
+        },
+        {
+          "en": "A messy desk is a sign of a creative mind.",
+          "fr": "Un bureau en désordre est le signe d'un esprit créatif.",
+          "es": "Un escritorio desordenado es señal de una mente creativa."
+        },
+        {
+          "en": "Grocery shopping in person is better than online delivery.",
+          "fr": "Faire ses courses en personne est mieux que la livraison en ligne.",
+          "es": "Comprar víveres en persona es mejor que la entrega en línea."
+        },
+        {
+          "en": "Smartwatches are more distracting than they are helpful.",
+          "fr": "Les montres connectées sont plus distrayantes qu'utiles.",
+          "es": "Los relojes inteligentes distraen más de lo que ayudan."
+        },
+        {
+          "en": "Drinking 2 liters of water a day is overrated.",
+          "fr": "Boire 2 litres d'eau par jour est surfait.",
+          "es": "Beber 2 litros de agua al día está sobrevalorado."
+        },
+        {
+          "en": "Napping during the day makes you less productive.",
+          "fr": "Faire la sieste pendant la journée vous rend moins productif.",
+          "es": "La siesta durante el día te hace menos productivo."
+        },
+        {
+          "en": "Using a physical alarm clock is better than using a phone.",
+          "fr": "Utiliser un réveil physique est mieux qu'utiliser un téléphone.",
+          "es": "Usar un despertador físico es mejor que usar un teléfono."
+        },
+        {
+          "en": "Handwriting notes is better for memory than typing.",
+          "fr": "Prendre des notes à la main est meilleur pour la mémoire que de les taper.",
+          "es": "Escribir notas a mano es mejor para la memoria que escribir a máquina."
+        },
+        {
+          "en": "Living with roommates is better than living alone.",
+          "fr": "Vivre en colocation est mieux que vivre seul.",
+          "es": "Vivir con compañeros de cuarto es mejor que vivir solo."
+        },
+        {
+          "en": "A 4-day work week should be the global standard.",
+          "fr": "Une semaine de travail de 4 jours devrait être la norme mondiale.",
+          "es": "Una semana laboral de 4 días debería ser el estándar mundial."
+        },
+        {
+          "en": "To-do lists actually increase stress rather than reducing it.",
+          "fr": "Les listes de tâches augmentent le stress plutôt que de le réduire.",
+          "es": "Las listas de tareas pendientes en realidad aumentan el estrés en lugar de reducirlo."
+        },
+        {
+          "en": "Email is an outdated form of communication.",
+          "fr": "L'e-mail est une forme de communication obsolète.",
+          "es": "El correo electrónico es una forma de comunicación obsoleta."
+        },
+        {
+          "en": "Casual dress codes at work decrease professionalism.",
+          "fr": "Le code vestimentaire décontracté au travail diminue le professionnalisme.",
+          "es": "Los códigos de vestimenta informal en el trabajo disminuyen el profesionalismo."
+        },
+        {
+          "en": "Subscription services are a drain on personal finances.",
+          "fr": "Les services d'abonnement pèsent sur les finances personnelles.",
+          "es": "Los servicios de suscripción son una carga para las finanzas personales."
+        },
+        {
+          "en": "Everyone should learn to repair their own clothes.",
+          "fr": "Tout le monde devrait apprendre à réparer ses propres vêtements.",
+          "es": "Todo el mundo debería aprender a reparar su propia ropa."
+        },
+        {
+          "en": "Gardening is the most relaxing hobby.",
+          "fr": "Le jardinage est le passe-temps le plus relaxant.",
+          "es": "La jardinería es el pasatiempo más relajante."
+        },
+        {
+          "en": "Taking photos of everything ruins the actual experience.",
+          "fr": "Prendre des photos de tout gâche l'expérience réelle.",
+          "es": "Tomar fotos de todo arruina la experiencia real."
+        }
       ]
     },
     {
       "id": "mystery",
-      "title": "Mystery Pack",
+      "title": {
+        "en": "Mystery Pack",
+        "fr": "Pack Mystère",
+        "es": "Pack Misterio"
+      },
       "topics": [
-        "Aliens have already visited Earth.",
-        "Ancient civilizations were more advanced than us.",
-        "The Loch Ness monster is real.",
-        "Time travel is possible but hidden from us.",
-        "Ghosts are just echoes of the past.",
-        "Bermuda Triangle is a portal.",
-        "The moon landing was filmed in a studio.",
-        "Bigfoot is an interdimensional traveler.",
-        "Crop circles are messages from space.",
-        "The deep ocean hides civilizations."
+        {
+          "en": "Aliens have already visited Earth.",
+          "fr": "Les extraterrestres ont déjà visité la Terre.",
+          "es": "Los extraterrestres ya han visitado la Tierra."
+        },
+        {
+          "en": "Ancient civilizations were more advanced than us.",
+          "fr": "Les civilisations anciennes étaient plus avancées que nous.",
+          "es": "Las civilizaciones antiguas eran más avancées que nosotros."
+        },
+        {
+          "en": "The Loch Ness monster is real.",
+          "fr": "Le monstre du Loch Ness est réel.",
+          "es": "El monstruo del Lago Ness es real."
+        },
+        {
+          "en": "Time travel is possible but hidden from us.",
+          "fr": "Le voyage dans le temps est possible mais il nous est caché.",
+          "es": "El viaje en el tiempo es posible pero se nos oculta."
+        },
+        {
+          "en": "Ghosts are just echoes of the past.",
+          "fr": "Les fantômes ne sont que des échos du passé.",
+          "es": "Los fantasmas son solo ecos del pasado."
+        },
+        {
+          "en": "Bermuda Triangle is a portal.",
+          "fr": "Le triangle des Bermudes est un portail.",
+          "es": "El Triángulo de las Bermudas es un portal."
+        },
+        {
+          "en": "The moon landing was filmed in a studio.",
+          "fr": "L'alunissage a été filmé dans un studio.",
+          "es": "El alunizaje fue filmado en un estudio."
+        },
+        {
+          "en": "Bigfoot is an interdimensional traveler.",
+          "fr": "Bigfoot est un voyageur interdimensionnel.",
+          "es": "Bigfoot es un viajero interdimensional."
+        },
+        {
+          "en": "Crop circles are messages from space.",
+          "fr": "Les crop circles sont des messages venus de l'espace.",
+          "es": "Los círculos en las cosechas son mensajes del espacio."
+        },
+        {
+          "en": "The deep ocean hides civilizations.",
+          "fr": "Les abysses de l'océan cachent des civilisations.",
+          "es": "El océano profundo esconde civilizaciones."
+        }
       ]
     },
     {
       "id": "animals",
-      "title": "Animals & Nature",
+      "title": {
+        "en": "Animals & Nature",
+        "fr": "Animaux & Nature",
+        "es": "Animales y Naturaleza"
+      },
       "topics": [
-        "Dogs are smarter than cats.",
-        "Zoos should be banned.",
-        "Cats are better emotional support animals than dogs.",
-        "Insects are the future of food.",
-        "Humans should stop eating meat completely.",
-        "Dolphins are as intelligent as humans.",
-        "Plants can feel pain.",
-        "House pets should be allowed everywhere.",
-        "Pigeons are actually very cool birds.",
-        "Bees are the most important species on Earth."
+        {
+          "en": "Dogs are smarter than cats.",
+          "fr": "Les chiens sont plus intelligents que les chats.",
+          "es": "Los perros son más inteligentes que los gatos."
+        },
+        {
+          "en": "Zoos should be banned.",
+          "fr": "Les zoos devraient être interdits.",
+          "es": "Los zoológicos deberían estar prohibidos."
+        },
+        {
+          "en": "Cats are better emotional support animals than dogs.",
+          "fr": "Les chats sont de meilleurs animaux de soutien émotionnel que les chiens.",
+          "es": "Los gatos son mejores animales de apoyo emocional que los perros."
+        },
+        {
+          "en": "Insects are the future of food.",
+          "fr": "Les insectes sont l'avenir de l'alimentation.",
+          "es": "Los insectos son el futuro de la comida."
+        },
+        {
+          "en": "Humans should stop eating meat completely.",
+          "fr": "Les humains devraient arrêter complètement de manger de la viande.",
+          "es": "Los humanos deberían dejar de comer carne por completo."
+        },
+        {
+          "en": "Dolphins are as intelligent as humans.",
+          "fr": "Les dauphins sont aussi intelligents que les humains.",
+          "es": "Los delfines son tan inteligentes como los humanos."
+        },
+        {
+          "en": "Plants can feel pain.",
+          "fr": "Les plantes peuvent ressentir de la douleur.",
+          "es": "Las plantas pueden sentir dolor."
+        },
+        {
+          "en": "House pets should be allowed everywhere.",
+          "fr": "Les animaux domestiques devraient être autorisés partout.",
+          "es": "Las mascotas deben estar permitidas en todas partes."
+        },
+        {
+          "en": "Pigeons are actually very cool birds.",
+          "fr": "Les pigeons sont en fait des oiseaux très cool.",
+          "es": "Las palomas son en realidad pájaros muy geniales."
+        },
+        {
+          "en": "Bees are the most important species on Earth.",
+          "fr": "Les abeilles sont l'espèce la plus importante sur Terre.",
+          "es": "Las abejas son la especie más importante de la Tierra."
+        }
       ]
     },
     {
       "id": "adults",
-      "title": "Adults Only",
+      "title": {
+        "en": "Adults Only",
+        "fr": "Adultes Uniquement",
+        "es": "Solo Adultos"
+      },
       "topics": [
-        "One-night stands are a valid way to spend a Friday.",
-        "Tinder has ruined modern dating.",
-        "Open relationships are the future of society.",
-        "Reality shows about dating are educational.",
-        "Drinking alone is a sign of sophistication.",
-        "Age is just a number in relationships.",
-        "Partying every weekend is exhausting but necessary.",
-        "Work-life balance is a myth.",
-        "Money can buy most kinds of happiness.",
-        "Honesty is not always the best policy in relationships."
+        {
+          "en": "One-night stands are a valid way to spend a Friday.",
+          "fr": "Les aventures d'un soir sont un moyen valable de passer un vendredi.",
+          "es": "Las aventuras de una noche son una forma válida de pasar un viernes."
+        },
+        {
+          "en": "Tinder has ruined modern dating.",
+          "fr": "Tinder a ruiné les rencontres modernes.",
+          "es": "Tinder ha arruinado las citas modernas."
+        },
+        {
+          "en": "Open relationships are the future of society.",
+          "fr": "Les relations libres sont l'avenir de la société.",
+          "es": "Las relaciones abiertas son el futuro de la sociedad."
+        },
+        {
+          "en": "Reality shows about dating are educational.",
+          "fr": "Les émissions de télé-réalité sur les rencontres sont éducatives.",
+          "es": "Los reality shows sobre citas son educativos."
+        },
+        {
+          "en": "Drinking alone is a sign of sophistication.",
+          "fr": "Boire seul est un signe de sophistication.",
+          "es": "Beber solo es señal de sofisticación."
+        },
+        {
+          "en": "Age is just a number in relationships.",
+          "fr": "L'âge n'est qu'un chiffre dans les relations.",
+          "es": "La edad es solo un número en las relaciones."
+        },
+        {
+          "en": "Partying every weekend is exhausting but necessary.",
+          "fr": "Faire la fête tous les week-ends est épuisant mais nécessaire.",
+          "es": "Ir de fiesta todos los fines de semana es agotador pero necesario."
+        },
+        {
+          "en": "Work-life balance is a myth.",
+          "fr": "L'équilibre travail-vie personnelle est un mythe.",
+          "es": "El equilibrio entre el trabajo y la vida es un mito."
+        },
+        {
+          "en": "Money can buy most kinds of happiness.",
+          "fr": "L'argent peut acheter la plupart des formes de bonheur.",
+          "es": "El dinero puede comprar la mayoría de los tipos de felicidad."
+        },
+        {
+          "en": "Honesty is not always the best policy in relationships.",
+          "fr": "L'honnêteté n'est pas toujours la meilleure politique dans les relations.",
+          "es": "La honestidad no siempre es la mejor política en las relaciones."
+        }
       ]
     },
     {
       "id": "anime",
-      "title": "Anime",
+      "title": {
+        "en": "Anime",
+        "fr": "Anime",
+        "es": "Anime"
+      },
       "topics": [
-        "Subbed is always better than dubbed.",
-        "Naruto is better than One Piece.",
-        "Attack on Titan has the best plot in history.",
-        "Fullmetal Alchemist: Brotherhood is perfect.",
-        "Mecha anime is a boring genre.",
-        "Studio Ghibli movies are overrated.",
-        "Dragon Ball Z is for kids.",
-        "Death Note's second half was a mistake.",
-        "Sword Art Online is actually good.",
-        "Cowboy Bebop is the coolest anime ever."
+        {
+          "en": "Subbed is always better than dubbed.",
+          "fr": "Les versions sous-titrées sont toujours meilleures que les versions doublées.",
+          "es": "Subtitulado siempre es mejor que doblado."
+        },
+        {
+          "en": "Naruto is better than One Piece.",
+          "fr": "Naruto est meilleur que One Piece.",
+          "es": "Naruto es mejor que One Piece."
+        },
+        {
+          "en": "Attack on Titan has the best plot in history.",
+          "fr": "Attack on Titan possède le meilleur scénario de l'histoire.",
+          "es": "Attack on Titan tiene la mejor trama de la historia."
+        },
+        {
+          "en": "Fullmetal Alchemist: Brotherhood is perfect.",
+          "fr": "Fullmetal Alchemist: Brotherhood est parfait.",
+          "es": "Fullmetal Alchemist: Brotherhood es perfecto."
+        },
+        {
+          "en": "Mecha anime is a boring genre.",
+          "fr": "L'anime Mecha est un genre ennuyeux.",
+          "es": "El anime Mecha es un género aburrido."
+        },
+        {
+          "en": "Studio Ghibli movies are overrated.",
+          "fr": "Les films du Studio Ghibli sont surévalués.",
+          "es": "Las películas de Studio Ghibli están sobrevaloradas."
+        },
+        {
+          "en": "Dragon Ball Z is for kids.",
+          "fr": "Dragon Ball Z est pour les enfants.",
+          "es": "Dragon Ball Z es para niños."
+        },
+        {
+          "en": "Death Note's second half was a mistake.",
+          "fr": "La seconde moitié de Death Note était une erreur.",
+          "es": "La segunda mitad de Death Note fue un error."
+        },
+        {
+          "en": "Sword Art Online is actually good.",
+          "fr": "Sword Art Online est en fait bien.",
+          "es": "Sword Art Online es realmente bueno."
+        },
+        {
+          "en": "Cowboy Bebop is the coolest anime ever.",
+          "fr": "Cowboy Bebop est l'anime le plus cool de tous les temps.",
+          "es": "Cowboy Bebop es el anime más genial de todos los tiempos."
+        }
       ]
     },
     {
       "id": "health",
-      "title": "Body & Health",
+      "title": {
+        "en": "Body & Health",
+        "fr": "Corps & Santé",
+        "es": "Cuerpo y Salud"
+      },
       "topics": [
-        "Intermittent fasting is a miracle.",
-        "Running is bad for your knees.",
-        "Vitamins are just expensive pee.",
-        "Sleeping 8 hours is impossible for adults.",
-        "Mental health is more important than physical health.",
-        "Sugar is more addictive than caffeine.",
-        "Gym culture is toxic.",
-        "Yoga is harder than lifting weights.",
-        "Everyone should be in therapy.",
-        "Technology is ruining our posture."
+        {
+          "en": "Intermittent fasting is a miracle.",
+          "fr": "Le jeûne intermittent est un miracle.",
+          "es": "El ayuno intermitente es un milagro."
+        },
+        {
+          "en": "Running is bad for your knees.",
+          "fr": "Courir est mauvais pour les genoux.",
+          "es": "Correr es malo para las rodillas."
+        },
+        {
+          "en": "Vitamins are just expensive pee.",
+          "fr": "Les vitamines ne sont que de l'urine coûteuse.",
+          "es": "Las vitaminas son solo pipí caro."
+        },
+        {
+          "en": "Sleeping 8 hours is impossible for adults.",
+          "fr": "Dormir 8 heures est impossible pour les adultes.",
+          "es": "Dormir 8 horas es imposible para los adultos."
+        },
+        {
+          "en": "Mental health is more important than physical health.",
+          "fr": "La santé mentale est plus importante que la santé physique.",
+          "es": "La salud mental es más importante que la salud física."
+        },
+        {
+          "en": "Sugar is more addictive than caffeine.",
+          "fr": "Le sucre est plus addictif que la caféine.",
+          "es": "El azúcar es más adictivo que la cafeína."
+        },
+        {
+          "en": "Gym culture is toxic.",
+          "fr": "La culture de la salle de sport est toxique.",
+          "es": "La cultura del gimnasio es tóxica."
+        },
+        {
+          "en": "Yoga is harder than lifting weights.",
+          "fr": "Le yoga est plus difficile que de soulever des poids.",
+          "es": "El yoga es más difícil que levantar pesas."
+        },
+        {
+          "en": "Everyone should be in therapy.",
+          "fr": "Tout le monde devrait suivre une thérapie.",
+          "es": "Todo el mundo debería ir a terapia."
+        },
+        {
+          "en": "Technology is ruining our posture.",
+          "fr": "La technologie ruine notre posture.",
+          "es": "La tecnología está arruinando nuestra postura."
+        }
       ]
     },
     {
       "id": "brands",
-      "title": "Brands",
+      "title": {
+        "en": "Brands",
+        "fr": "Marques",
+        "es": "Marcas"
+      },
       "topics": [
-        "Apple is just a marketing company.",
-        "Coke is better than Pepsi.",
-        "Starbucks coffee is bad.",
-        "Designer clothes are for insecure people.",
-        "Nike shoes are overrated.",
-        "Tesla is more of a tech company than a car company.",
-        "Amazon is a monopoly that should be broken up.",
-        "Google knows too much about us.",
-        "Fast fashion is a crime against nature.",
-        "Luxury watches are a waste of money."
+        {
+          "en": "Apple is just a marketing company.",
+          "fr": "Apple n'est qu'une société de marketing.",
+          "es": "Apple es solo una empresa de marketing."
+        },
+        {
+          "en": "Coke is better than Pepsi.",
+          "fr": "Le Coca est meilleur que le Pepsi.",
+          "es": "Coke es mejor que Pepsi."
+        },
+        {
+          "en": "Starbucks coffee is bad.",
+          "fr": "Le café Starbucks est mauvais.",
+          "es": "El café de Starbucks es malo."
+        },
+        {
+          "en": "Designer clothes are for insecure people.",
+          "fr": "Les vêtements de marque sont destinés aux personnes complexées.",
+          "es": "La ropa de diseño es para personas inseguras."
+        },
+        {
+          "en": "Nike shoes are overrated.",
+          "fr": "Les chaussures Nike sont surévaluées.",
+          "es": "Las zapatillas Nike están sobrevaloradas."
+        },
+        {
+          "en": "Tesla is more of a tech company than a car company.",
+          "fr": "Tesla est plus une entreprise technologique qu'un constructeur automobile.",
+          "es": "Tesla es más una empresa tecnológica que una empresa de automóviles."
+        },
+        {
+          "en": "Amazon is a monopoly that should be broken up.",
+          "fr": "Amazon est un monopole qui devrait être démantelé.",
+          "es": "Amazon es un monopolio que debería dividirse."
+        },
+        {
+          "en": "Google knows too much about us.",
+          "fr": "Google en sait trop sur nous.",
+          "es": "Google sabe demasiado sobre nosotros."
+        },
+        {
+          "en": "Fast fashion is a crime against nature.",
+          "fr": "La fast fashion est un crime contre la nature.",
+          "es": "La moda rápida es un crimen contra la naturaleza."
+        },
+        {
+          "en": "Luxury watches are a waste of money.",
+          "fr": "Les montres de luxe sont un gaspillage d'argent.",
+          "es": "Los relojes de lujo son una pérdida de dinero."
+        }
       ]
     },
     {
       "id": "characters",
-      "title": "Characters",
+      "title": {
+        "en": "Characters",
+        "fr": "Personnages",
+        "es": "Personajes"
+      },
       "topics": [
-        "Batman could defeat Superman with prep time.",
-        "Iron Man is better than Captain America.",
-        "Joker was right in his philosophy.",
-        "Harry Potter should have ended up with Hermione.",
-        "Sherlock Holmes is impossible to live with.",
-        "Voldemort was a weak villain.",
-        "Darth Vader is the best redeemed character.",
-        "Spiderman is the most relatable hero.",
-        "Black Widow deserved her own trilogy.",
-        "Thanos' plan actually made sense."
+        {
+          "en": "Batman could defeat Superman with prep time.",
+          "fr": "Batman pourrait vaincre Superman avec du temps de préparation.",
+          "es": "Batman podría derrotar a Superman con tiempo de preparación."
+        },
+        {
+          "en": "Iron Man is better than Captain America.",
+          "fr": "Iron Man est meilleur que Captain America.",
+          "es": "Iron Man es mejor que el Capitán América."
+        },
+        {
+          "en": "Joker was right in his philosophy.",
+          "fr": "Le Joker avait raison dans sa philosophie.",
+          "es": "Joker tenía razón en su filosofía."
+        },
+        {
+          "en": "Harry Potter should have ended up with Hermione.",
+          "fr": "Harry Potter aurait dû finir avec Hermione.",
+          "es": "Harry Potter debería haber terminado con Hermione."
+        },
+        {
+          "en": "Sherlock Holmes is impossible to live with.",
+          "fr": "Sherlock Holmes est impossible à vivre.",
+          "es": "Sherlock Holmes es imposible de convivir."
+        },
+        {
+          "en": "Voldemort was a weak villain.",
+          "fr": "Voldemort était un méchant faible.",
+          "es": "Voldemort era un villano débil."
+        },
+        {
+          "en": "Darth Vader is the best redeemed character.",
+          "fr": "Dark Vador est le meilleur personnage racheté.",
+          "es": "Darth Vader es el mejor personaje redimido."
+        },
+        {
+          "en": "Spiderman is the most relatable hero.",
+          "fr": "Spiderman est le héros auquel on s'identifie le plus.",
+          "es": "Spiderman es el héroe con el que más se puede identificar."
+        },
+        {
+          "en": "Black Widow deserved her own trilogy.",
+          "fr": "Black Widow méritait sa propre trilogie.",
+          "es": "Black Widow merecía su propia trilogía."
+        },
+        {
+          "en": "Thanos' plan actually made sense.",
+          "fr": "Le plan de Thanos tenait en fait la route.",
+          "es": "El plan de Thanos en realidad tenía sentido."
+        }
       ]
     }
   ]

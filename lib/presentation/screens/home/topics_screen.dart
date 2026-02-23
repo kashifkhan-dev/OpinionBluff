@@ -4,6 +4,7 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class PackItem {
   final String id;
@@ -36,33 +37,40 @@ class TopicsScreen extends StatelessWidget {
     final subProvider = context.watch<SubscriptionProvider>();
     final isIPad = MediaQuery.of(context).size.shortestSide >= 600;
 
+    final l10n = context.watch<LocaleViewModel>().l10n;
+
     final packs = [
-      PackItem(id: 'mystery', title: 'Mystery Pack', emoji: '🎁', isSelected: viewModel.selectedPack == 'Mystery Pack'),
+      PackItem(
+        id: 'mystery',
+        title: l10n.get('mystery_pack'),
+        emoji: '🎁',
+        isSelected: viewModel.selectedPack == l10n.get('mystery_pack'),
+      ),
       PackItem(
         id: 'animals',
-        title: 'Animals & Nature',
+        title: l10n.get('animals_nature'),
         emoji: '🦁',
         isLocked: false,
-        isSelected: viewModel.selectedPack == 'Animals & Nature',
+        isSelected: viewModel.selectedPack == l10n.get('animals_nature'),
       ),
       PackItem(
         id: 'daily_life',
-        title: 'Daily Life',
+        title: l10n.get('daily_life'),
         emoji: '⏰',
         isUpdated: true,
-        isSelected: viewModel.selectedPack == 'Daily Life',
+        isSelected: viewModel.selectedPack == l10n.get('daily_life'),
       ),
       PackItem(
         id: 'adults',
-        title: 'Adults Only',
+        title: l10n.get('adults_only'),
         emoji: '🌶️',
         isLocked: !subProvider.isSubscribed,
         isEighteenPlus: true,
       ),
-      PackItem(id: 'anime', title: 'Anime', emoji: '🧑‍🎤', isLocked: !subProvider.isSubscribed),
-      PackItem(id: 'health', title: 'Body & Health', emoji: '❤️', isLocked: !subProvider.isSubscribed),
-      PackItem(id: 'brands', title: 'Brands', emoji: '🥤', isLocked: !subProvider.isSubscribed),
-      PackItem(id: 'characters', title: 'Characters', emoji: '🧙‍♂️', isLocked: !subProvider.isSubscribed),
+      PackItem(id: 'anime', title: l10n.get('anime'), emoji: '🧑‍🎤', isLocked: !subProvider.isSubscribed),
+      PackItem(id: 'health', title: l10n.get('body_health'), emoji: '❤️', isLocked: !subProvider.isSubscribed),
+      PackItem(id: 'brands', title: l10n.get('brands'), emoji: '🥤', isLocked: !subProvider.isSubscribed),
+      PackItem(id: 'characters', title: l10n.get('characters'), emoji: '🧙‍♂️', isLocked: !subProvider.isSubscribed),
     ];
 
     return Scaffold(
@@ -103,7 +111,7 @@ class TopicsScreen extends StatelessWidget {
                             onPressed: () => context.pop(),
                           ),
                           CNButton(
-                            label: 'Create',
+                            label: l10n.get('create'),
                             icon: const CNSymbol('plus', size: 14),
                             config: CNButtonConfig(
                               style: CNButtonStyle.glass,
@@ -114,9 +122,9 @@ class TopicsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 32),
-                      const Text(
-                        'Select Packs',
-                        style: TextStyle(
+                      Text(
+                        l10n.get('select_packs'),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 34,
                           fontWeight: FontWeight.w900,
@@ -124,9 +132,9 @@ class TopicsScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'More packs, more chaos — pick your favorites!',
-                        style: TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.w500),
+                      Text(
+                        l10n.get('select_packs_desc'),
+                        style: const TextStyle(color: Colors.white54, fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 40),
                     ],
@@ -219,9 +227,9 @@ class TopicsScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(color: const Color(0xFF34C759), borderRadius: BorderRadius.circular(8)),
-                child: const Text(
-                  'Updated',
-                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                child: Text(
+                  context.watch<LocaleViewModel>().l10n.get('updated'),
+                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -266,155 +274,6 @@ class TopicsScreen extends StatelessWidget {
   }
 
   void _showSubscriptionDialog(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Dismiss',
-      barrierColor: Colors.black.withAlpha(200),
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return ScaleTransition(
-          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
-          child: FadeTransition(
-            opacity: animation,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: LiquidGlassContainer(
-                  config: LiquidGlassConfig(
-                    effect: CNGlassEffect.prominent,
-                    cornerRadius: 32,
-                    shape: CNGlassEffectShape.rect,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: Colors.white.withAlpha(30)),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: const Icon(Icons.close, color: Colors.white38, size: 24),
-                            ),
-                          ],
-                        ),
-                        const Icon(Icons.auto_awesome_rounded, color: Color(0xFF00C7FF), size: 48),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Unlock All Packs',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Access every topic pack and remove restrictions.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white60,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                        _buildSubscriptionOption(
-                          context,
-                          title: '3-Day Free Trial',
-                          subtitle: '3 days free, then annual subscription',
-                          isPrimary: true,
-                          onTap: () {
-                            context.read<SubscriptionProvider>().subscribe(SubscriptionPlan.trial);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        _buildSubscriptionOption(
-                          context,
-                          title: 'Weekly Plan',
-                          subtitle: '\$5 per week',
-                          isPrimary: false,
-                          onTap: () {
-                            context.read<SubscriptionProvider>().subscribe(SubscriptionPlan.weekly);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        TextButton(
-                          onPressed: () {
-                            context.read<SubscriptionProvider>().restorePurchase();
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Restore Purchase',
-                            style: TextStyle(color: Colors.white38, fontSize: 14, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSubscriptionOption(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required bool isPrimary,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
-        decoration: BoxDecoration(
-          color: isPrimary ? const Color(0xFF007AFF) : Colors.white.withAlpha(20),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: isPrimary
-              ? [BoxShadow(color: const Color(0xFF007AFF).withAlpha(100), blurRadius: 20, offset: const Offset(0, 8))]
-              : null,
-        ),
-        child: Column(
-          children: [
-            Text(
-              isPrimary ? 'Start Free Trial' : 'Weekly \$5',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                decoration: TextDecoration.none,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                color: isPrimary ? Colors.white70 : Colors.white38,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    context.push('/subscription-unlimited');
   }
 }

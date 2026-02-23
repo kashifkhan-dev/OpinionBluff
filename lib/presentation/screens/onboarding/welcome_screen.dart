@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final VoidCallback onContinue;
@@ -44,16 +46,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
+
     return Column(
       children: [
         const SizedBox(height: 60),
         // Top Headline
         FadeTransition(
           opacity: _fadeAnimation,
-          child: const Text(
-            'Welcome to\nOpinion Bluff',
+          child: Text(
+            l10n.get('welcome_title'),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -88,7 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              'Everything you need for your next\nparty night all in one place.',
+              l10n.get('welcome_tagline'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
@@ -114,7 +118,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
               width: double.infinity,
               height: 60,
               child: CNButton(
-                label: 'Continue',
+                label: l10n.get('continue'),
                 config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
                 onPressed: widget.onContinue,
               ),

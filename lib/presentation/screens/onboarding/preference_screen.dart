@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class PreferenceScreen extends StatelessWidget {
   final VoidCallback onContinue;
@@ -11,13 +12,12 @@ class PreferenceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<OnboardingViewModel>();
+    final l10n = context.watch<LocaleViewModel>().l10n;
     final bool isIPad = MediaQuery.of(context).size.shortestSide >= 600;
 
     final options = [
-      {'label': 'Friends', 'image': 'assets/onboarding/selections/friend1.jpeg', 'color': Colors.blue},
-      {'label': 'Family', 'image': 'assets/onboarding/selections/family2.jpeg', 'color': Colors.amber},
-      {'label': 'Partner', 'image': 'assets/onboarding/selections/partner3.jpeg', 'color': Colors.pink},
-      {'label': 'Colleagues', 'image': 'assets/onboarding/selections/colleagues4.jpeg', 'color': Colors.orange},
+      {'label': l10n.get('friends'), 'image': 'assets/onboarding/selections/friend1.jpeg', 'color': Colors.blue},
+      {'label': l10n.get('family'), 'image': 'assets/onboarding/selections/family2.jpeg', 'color': Colors.amber},
     ];
 
     return Stack(
@@ -27,10 +27,10 @@ class PreferenceScreen extends StatelessWidget {
           top: 50,
           left: 40,
           right: 40,
-          child: const Text(
-            'Who do you most like\nto play with?',
+          child: Text(
+            l10n.get('who_play_with'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+            style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: -0.5),
           ),
         ),
         // Main Content starting below the top section
@@ -71,10 +71,10 @@ class PreferenceScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const Text(
-                'For the best game experience, tell the driver.',
+              Text(
+                l10n.get('driver_instruction'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white38, fontSize: 13),
+                style: const TextStyle(color: Colors.white38, fontSize: 13),
               ),
               const SizedBox(height: 24),
               // Continue Button
@@ -83,7 +83,7 @@ class PreferenceScreen extends StatelessWidget {
                 child: SizedBox(
                   height: 60,
                   child: CNButton(
-                    label: 'Continue',
+                    label: l10n.get('continue'),
                     config: CNButtonConfig(
                       style: viewModel.isPreferenceSelected ? CNButtonStyle.prominentGlass : CNButtonStyle.glass,
                     ),

@@ -6,6 +6,8 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/share_strings.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:provider/provider.dart';
 
 class HypeScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -77,6 +79,9 @@ class _HypeScreenState extends State<HypeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
+    final currentLang = context.watch<LocaleViewModel>().currentLanguage;
+
     return Stack(
       children: [
         // Title centered at the very top
@@ -84,10 +89,10 @@ class _HypeScreenState extends State<HypeScreen> {
           top: 62,
           left: 40,
           right: 40,
-          child: const Text(
-            'Are you ready\nto party?',
+          child: Text(
+            l10n.get('welcome_title'), // Reusing welcome_title or update mapping
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -0.5),
           ),
         ),
         // Back navigation button
@@ -95,8 +100,8 @@ class _HypeScreenState extends State<HypeScreen> {
           top: 2,
           left: 24,
           child: CNButton.icon(
-            icon: CNSymbol('chevron.left', size: 20),
-            config: CNButtonConfig(style: CNButtonStyle.glass),
+            icon: const CNSymbol('chevron.left', size: 20),
+            config: const CNButtonConfig(style: CNButtonStyle.glass),
             onPressed: widget.onBack,
           ),
         ),
@@ -138,10 +143,10 @@ class _HypeScreenState extends State<HypeScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          '“This is honestly just so cool and fun — literally saves every night.”',
+                        Text(
+                          l10n.get('welcome_tagline'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
@@ -150,9 +155,9 @@ class _HypeScreenState extends State<HypeScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
-                          '#1 Party App Worldwide',
-                          style: TextStyle(
+                        Text(
+                          l10n.get('worldwide_tagline'),
+                          style: const TextStyle(
                             color: Color(0xFF00C7FF),
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -192,6 +197,8 @@ class _HypeScreenState extends State<HypeScreen> {
                     itemCount: _reviews.isEmpty ? 0 : 1000,
                     itemBuilder: (context, index) {
                       final review = _reviews[index % _reviews.length];
+                      final reviewText = review['review'][currentLang.code] ?? review['review']['en'];
+
                       return Padding(
                         padding: EdgeInsets.only(left: index == 0 ? 24 : 12, right: index == 999 ? 24 : 0),
                         child: SizedBox(
@@ -241,12 +248,12 @@ class _HypeScreenState extends State<HypeScreen> {
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                            const Row(
+                                            Row(
                                               children: [
-                                                Icon(Icons.star_rounded, color: Colors.amber, size: 14),
+                                                const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
                                                 Text(
-                                                  ' 5.0 Rating',
-                                                  style: TextStyle(
+                                                  l10n.get('rating_text'),
+                                                  style: const TextStyle(
                                                     color: Colors.white60,
                                                     fontSize: 11,
                                                     fontWeight: FontWeight.w500,
@@ -261,7 +268,7 @@ class _HypeScreenState extends State<HypeScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    review['review'],
+                                    reviewText,
                                     style: TextStyle(
                                       color: Colors.white.withValues(alpha: 0.85),
                                       fontSize: 13,
@@ -292,9 +299,9 @@ class _HypeScreenState extends State<HypeScreen> {
                         return SizedBox(
                           height: 60,
                           child: CNButton(
-                            label: '    Invite Friends',
-                            icon: CNSymbol('person.badge.plus', size: 16),
-                            config: CNButtonConfig(
+                            label: l10n.get('invite_friends'),
+                            icon: const CNSymbol('person.badge.plus', size: 16),
+                            config: const CNButtonConfig(
                               style: CNButtonStyle.glass,
                               imagePlacement: CNImagePlacement.leading,
                             ),
@@ -318,8 +325,8 @@ class _HypeScreenState extends State<HypeScreen> {
                     SizedBox(
                       height: 60,
                       child: CNButton(
-                        label: 'Let’s Go',
-                        config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+                        label: l10n.get('got_it'),
+                        config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
                         onPressed: () => context.go('/home'),
                       ),
                     ),

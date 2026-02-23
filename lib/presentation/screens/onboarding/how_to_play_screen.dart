@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/core/localization/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class HowToPlayScreen extends StatefulWidget {
   final bool isStandalone;
@@ -15,43 +18,41 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, String>> _segments = [
+  List<Map<String, dynamic>> _getSegments(AppLocalizations l10n) => [
     {
-      'title': 'Game Overview',
-      'description':
-          'Opinion Bluff is a social game of deception and debate. One player is the Bluffer while the others are the Honest group.',
-      'detail':
-          'The goal of the group is to find the Bluffer. The goal of the Bluffer is to blend in and not get caught.',
+      'title': l10n.get('htp_overview_title'),
+      'description': l10n.get('htp_overview_desc'),
+      'detail': l10n.get('htp_overview_detail'),
       'icon': 'doc.text.magnifyingglass',
       'image': 'assets/images/onboarding_results.png',
     },
     {
-      'title': 'Reveal Phase',
-      'description': 'Pass the phone around. Each player holds their card to reveal their secret topic.',
-      'detail':
-          'Keep your screen hidden! If you are the Bluffer, you won\'t know the group\'s topic, but you will get a fake one.',
+      'title': l10n.get('htp_reveal_title'),
+      'description': l10n.get('htp_reveal_desc'),
+      'detail': l10n.get('htp_reveal_detail'),
       'icon': 'hand.raised.fill',
       'image': 'assets/images/onboarding_reveal.png',
     },
     {
-      'title': 'Discussion Phase',
-      'description': 'Start the timer and talk! Defend your opinion and discuss the topic with others.',
-      'detail':
-          'Listen carefully. The Bluffer will try to sound like they know what they are talking about, even if they don\'t!',
+      'title': l10n.get('htp_discussion_title'),
+      'description': l10n.get('htp_discussion_desc'),
+      'detail': l10n.get('htp_discussion_detail'),
       'icon': 'bubble.left.and.bubble.right.fill',
       'image': 'assets/images/onboarding_discussion.png',
     },
     {
-      'title': 'Voting Phase',
-      'description': 'Once the time is up, everyone votes secretly for who they think is the Bluffer.',
-      'detail': 'If the majority catches the Bluffer, the group wins! Otherwise, the Bluffer escapes and wins.',
+      'title': l10n.get('htp_voting_title'),
+      'description': l10n.get('htp_voting_desc'),
+      'detail': l10n.get('htp_voting_detail'),
       'icon': 'checkmark.seal.fill',
       'image': 'assets/images/onboarding_voting.png',
     },
   ];
 
   void _nextPage() {
-    if (_currentPage < _segments.length - 1) {
+    final l10n = context.read<LocaleViewModel>().l10n;
+    final segments = _getSegments(l10n);
+    if (_currentPage < segments.length - 1) {
       _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOutCubic);
     } else {
       if (widget.onComplete != null) {
@@ -65,6 +66,8 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isIPad = MediaQuery.of(context).size.shortestSide >= 600;
+    final l10n = context.watch<LocaleViewModel>().l10n;
+    final segments = _getSegments(l10n);
 
     return Scaffold(
       backgroundColor: widget.isStandalone ? const Color(0xFF070421) : Colors.transparent,
@@ -92,7 +95,7 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
                       children: [
                         CNButton.icon(
                           icon: const CNSymbol('arrow.left', size: 20),
-                          config: CNButtonConfig(style: CNButtonStyle.glass),
+                          config: const CNButtonConfig(style: CNButtonStyle.glass),
                           onPressed: () => context.pop(),
                         ),
                       ],
@@ -103,7 +106,7 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: isIPad ? 120 : 40, vertical: 20),
                   child: Row(
-                    children: List.generate(_segments.length, (index) {
+                    children: List.generate(segments.length, (index) {
                       return Expanded(
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
@@ -126,9 +129,9 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
                   child: PageView.builder(
                     controller: _pageController,
                     onPageChanged: (i) => setState(() => _currentPage = i),
-                    itemCount: _segments.length,
+                    itemCount: segments.length,
                     itemBuilder: (context, index) {
-                      final segment = _segments[index];
+                      final segment = segments[index];
                       final isCurrent = index == _currentPage;
 
                       return AnimatedOpacity(
@@ -147,7 +150,7 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
                                 children: [
                                   const SizedBox(height: 40),
                                   Hero(
-                                    tag: 'detective',
+                                    tag: 'detective_$index',
                                     child: Container(
                                       height: 240,
                                       decoration: BoxDecoration(
@@ -215,8 +218,8 @@ class _HowToPlayScreenState extends State<HowToPlayScreen> {
                     width: double.infinity,
                     height: 64,
                     child: CNButton(
-                      label: _currentPage == _segments.length - 1 ? 'Got It' : 'Next',
-                      config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+                      label: _currentPage == segments.length - 1 ? l10n.get('got_it') : l10n.get('next'),
+                      config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
                       onPressed: _nextPage,
                     ),
                   ),

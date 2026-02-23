@@ -6,6 +6,7 @@ import 'package:opinion_bluff/presentation/viewmodels/voting_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class VotingScreen extends StatefulWidget {
   const VotingScreen({super.key});
@@ -60,7 +61,7 @@ class _VotingScreenState extends State<VotingScreen> {
             const Icon(Icons.phonelink_setup, color: Colors.white70, size: 80),
             const SizedBox(height: 32),
             Text(
-              'Pass the phone to\n${viewModel.currentVoter?.name ?? "Player"}',
+              '${context.watch<LocaleViewModel>().l10n.get('pass_phone_to')}\n${viewModel.currentVoter?.name ?? "Player"}',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
             ),
@@ -69,8 +70,8 @@ class _VotingScreenState extends State<VotingScreen> {
               width: double.infinity,
               height: 60,
               child: CNButton(
-                label: 'Continue',
-                config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+                label: context.watch<LocaleViewModel>().l10n.get('continue'),
+                config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
                 onPressed: () {
                   setState(() {
                     _selectedPlayerIndex = null;
@@ -94,17 +95,21 @@ class _VotingScreenState extends State<VotingScreen> {
       children: [
         const SizedBox(height: 20),
         Text(
-          '${viewModel.currentVoter?.name}\'s Vote',
+          context
+              .watch<LocaleViewModel>()
+              .l10n
+              .get('player_vote_title')
+              .replaceAll('{name}', viewModel.currentVoter?.name ?? ''),
           style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 16),
         _buildVotingProgress(viewModel),
         const SizedBox(height: 24),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
-            'Who is the Bluffer?',
-            style: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
+            context.watch<LocaleViewModel>().l10n.get('who_is_bluffer'),
+            style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
           ),
         ),
         const SizedBox(height: 16),
@@ -122,21 +127,28 @@ class _VotingScreenState extends State<VotingScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: viewModel.players.map((p) {
           final voted = viewModel.hasPlayerVoted(p.index);
-          return Container(
+          final bool isActiveVoter = viewModel.activeVoterIndex == p.index;
+
+          final child = Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
             width: 32,
             height: 32,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: voted ? const Color(0xFF34C759) : Colors.white10,
-              border: Border.all(color: Colors.white24),
+              color: voted ? const Color(0xFF34C759) : (isActiveVoter ? Colors.white24 : Colors.white10),
+              border: Border.all(color: isActiveVoter ? Colors.white : Colors.white24, width: isActiveVoter ? 2 : 1),
             ),
             child: Icon(
               voted ? Icons.check : Icons.person_outline,
-              size: 16,
-              color: voted ? Colors.white : Colors.white24,
+              size: isActiveVoter ? 18 : 16,
+              color: voted ? Colors.white : (isActiveVoter ? Colors.white : Colors.white24),
             ),
           );
+
+          if (isActiveVoter && !voted) {
+            return _PulsingAvatar(child: child);
+          }
+          return child;
         }).toList(),
       ),
     );
@@ -215,8 +227,8 @@ class _VotingScreenState extends State<VotingScreen> {
           width: double.infinity,
           height: 60,
           child: CNButton(
-            label: 'Show Results',
-            config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+            label: context.watch<LocaleViewModel>().l10n.get('show_results'),
+            config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
             onPressed: () {
               final resultProvider = context.read<ResultProvider>();
               final revealProvider = context.read<RevealProvider>();
@@ -237,8 +249,8 @@ class _VotingScreenState extends State<VotingScreen> {
           width: double.infinity,
           height: 60,
           child: CNButton(
-            label: 'Confirm Vote',
-            config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+            label: context.watch<LocaleViewModel>().l10n.get('confirm_vote'),
+            config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
             onPressed: () {
               viewModel.castVote(_selectedPlayerIndex!);
               setState(() {
@@ -251,5 +263,39 @@ class _VotingScreenState extends State<VotingScreen> {
     }
 
     return const SizedBox(height: 60);
+  }
+}
+
+class _PulsingAvatar extends StatefulWidget {
+  final Widget child;
+  const _PulsingAvatar({required this.child});
+
+  @override
+  State<_PulsingAvatar> createState() => _PulsingAvatarState();
+}
+
+class _PulsingAvatarState extends State<_PulsingAvatar> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.25,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(scale: _scaleAnimation, child: widget.child);
   }
 }

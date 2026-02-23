@@ -9,6 +9,10 @@ import 'package:opinion_bluff/presentation/screens/game/result_screen.dart';
 import 'package:opinion_bluff/presentation/screens/home/topics_screen.dart';
 
 import 'package:opinion_bluff/presentation/screens/onboarding/how_to_play_screen.dart';
+import 'package:opinion_bluff/presentation/screens/subscription/unlimited_access_screen.dart';
+import 'package:opinion_bluff/presentation/screens/subscription/welcome_offer_screen.dart';
+import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
+import 'package:opinion_bluff/presentation/screens/game/player_setup_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -21,5 +25,12 @@ final appRouter = GoRouter(
     GoRoute(path: '/results', builder: (context, state) => const ResultScreen()),
     GoRoute(path: '/topics', builder: (context, state) => const TopicsScreen()),
     GoRoute(path: '/how-to-play', builder: (context, state) => const HowToPlayScreen(isStandalone: true)),
+    GoRoute(path: '/subscription-unlimited', builder: (context, state) => const UnlimitedAccessScreen()),
+    GoRoute(path: '/player-setup', builder: (context, state) => const PlayerSetupScreen()),
+    GoRoute(
+      path: '/subscription-welcome',
+      builder: (context, state) =>
+          WelcomeOfferScreen(selectedPlan: state.extra as SubscriptionPlan? ?? SubscriptionPlan.weekly),
+    ),
   ],
 );

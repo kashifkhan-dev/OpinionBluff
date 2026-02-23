@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/game_round.dart';
+import 'package:opinion_bluff/domain/entities/punishment.dart';
 
 class GameConfigViewModel extends ChangeNotifier {
-  int _players = 3;
   String _selectedPack = 'Daily Life';
-  String _gameMode = 'Classic';
   TopicMode _topicMode = TopicMode.same;
-  List<String> _playerNames = ['Anna', 'Luis', 'Mark'];
 
   // Punishments
-  final List<String> _predefinedPunishments = [
-    'Do 10 push-ups',
-    'Pay for dinner',
-    'Call your mom or dad and prank them',
-    'Sing a song',
-    'Dance for 30 seconds',
+  final List<Punishment> _predefinedPunishments = [
+    Punishment(id: 'pushups', name: 'punishment_pushups', difficulty: PunishmentDifficulty.low),
+    Punishment(id: 'sing', name: 'punishment_sing', difficulty: PunishmentDifficulty.low),
+    Punishment(id: 'dance', name: 'punishment_dance', difficulty: PunishmentDifficulty.hard),
+    Punishment(id: 'dinner', name: 'punishment_dinner', difficulty: PunishmentDifficulty.hard),
+    Punishment(id: 'prank', name: 'punishment_prank', difficulty: PunishmentDifficulty.veryHard),
+    Punishment(id: 'shave', name: 'punishment_shave', difficulty: PunishmentDifficulty.veryHard),
   ];
-  final List<String> _customPunishments = [];
-  String _selectedPunishment = 'Do 10 push-ups';
+  final List<Punishment> _customPunishments = [];
+  String _selectedPunishmentId = 'pushups';
 
   int _durationIndex = 4; // Index for '3 minutes'
   final List<String> _durationOptions = [
@@ -29,19 +28,37 @@ class GameConfigViewModel extends ChangeNotifier {
     '5 minutes',
   ];
 
-  int get players => _players;
   String get selectedPack => _selectedPack;
   String get duration => _durationOptions[_durationIndex];
-  String get selectedPunishment => _selectedPunishment;
-  List<String> get allPunishments => [..._predefinedPunishments, ..._customPunishments];
-  List<String> get customPunishments => _customPunishments;
+  String get selectedPunishmentId => _selectedPunishmentId;
+
+  List<Punishment> get allPunishments => [..._predefinedPunishments, ..._customPunishments];
+  List<Punishment> get customPunishments => _customPunishments;
+
+  Map<PunishmentDifficulty, List<Punishment>> get categorizedPunishments {
+    final Map<PunishmentDifficulty, List<Punishment>> map = {
+      PunishmentDifficulty.low: [],
+      PunishmentDifficulty.hard: [],
+      PunishmentDifficulty.veryHard: [],
+    };
+    for (var p in allPunishments) {
+      map[p.difficulty]?.add(p);
+    }
+    return map;
+  }
+
+  String get selectedPunishment {
+    final p = allPunishments.firstWhere(
+      (p) => p.id == _selectedPunishmentId,
+      orElse: () => _predefinedPunishments.first,
+    );
+    return p.name;
+  }
 
   String get durationValue => _durationOptions[_durationIndex].split(' ')[0];
   String get durationUnit => _durationOptions[_durationIndex].contains('second') ? 'sec' : 'min';
 
-  String get gameMode => _gameMode;
   TopicMode get topicMode => _topicMode;
-  List<String> get playerNames => _playerNames;
 
   void incrementDuration() {
     if (_durationIndex < _durationOptions.length - 1) {
@@ -57,44 +74,8 @@ class GameConfigViewModel extends ChangeNotifier {
     }
   }
 
-  void updatePlayers(int value) {
-    if (value < 3 || value > 12) return;
-    _players = value;
-
-    // Adjust player names list length
-    if (_playerNames.length < _players) {
-      for (int i = _playerNames.length; i < _players; i++) {
-        _playerNames.add('Player ${i + 1}');
-      }
-    } else if (_playerNames.length > _players) {
-      _playerNames = _playerNames.sublist(0, _players);
-    }
-
-    notifyListeners();
-  }
-
-  void incrementPlayers() {
-    updatePlayers(_players + 1);
-  }
-
-  void decrementPlayers() {
-    updatePlayers(_players - 1);
-  }
-
-  void updatePlayerName(int index, String name) {
-    if (index >= 0 && index < _playerNames.length) {
-      _playerNames[index] = name;
-      notifyListeners();
-    }
-  }
-
   void updatePack(String value) {
     _selectedPack = value;
-    notifyListeners();
-  }
-
-  void updateGameMode(String value) {
-    _gameMode = value;
     notifyListeners();
   }
 
@@ -103,23 +84,23 @@ class GameConfigViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePunishment(String punishment) {
-    _selectedPunishment = punishment;
+  void updatePunishment(String punishmentId) {
+    _selectedPunishmentId = punishmentId;
     notifyListeners();
   }
 
-  void addCustomPunishment(String punishment) {
-    if (punishment.isNotEmpty && !_customPunishments.contains(punishment)) {
-      _customPunishments.add(punishment);
-      _selectedPunishment = punishment;
-      notifyListeners();
-    }
+  void addCustomPunishment(String name, PunishmentDifficulty difficulty) {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    final punishment = Punishment(id: id, name: name, difficulty: difficulty, isCustom: true);
+    _customPunishments.add(punishment);
+    _selectedPunishmentId = id;
+    notifyListeners();
   }
 
-  void deleteCustomPunishment(String punishment) {
-    _customPunishments.remove(punishment);
-    if (_selectedPunishment == punishment) {
-      _selectedPunishment = _predefinedPunishments.first;
+  void deleteCustomPunishment(String id) {
+    _customPunishments.removeWhere((p) => p.id == id);
+    if (_selectedPunishmentId == id) {
+      _selectedPunishmentId = _predefinedPunishments.first.id;
     }
     notifyListeners();
   }

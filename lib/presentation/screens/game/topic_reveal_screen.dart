@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class TopicRevealScreen extends StatelessWidget {
   const TopicRevealScreen({super.key});
@@ -42,30 +43,50 @@ class TopicRevealScreen extends StatelessWidget {
 
                 // Main Reveal Card centerpiece
                 Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        viewModel.activePlayer?.name ?? "...",
-                        style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: isIPad ? 600 : 340, maxHeight: isIPad ? 700 : 450),
-                        child: const RevealInteractionStack(),
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: Text(
-                          viewModel.isSessionRevealed
-                              ? "Revealed! Release to hide."
-                              : "Hold at the top to reveal your topic.",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 600),
+                    switchInCurve: Curves.easeInOutCubic,
+                    switchOutCurve: Curves.easeInOutCubic,
+                    transitionBuilder: (Widget child, Animation<double> animation) {
+                      final bool isNewChild = child.key == ValueKey<int>(viewModel.activePlayerIndex);
+
+                      // Slide in from right for new child, slide out to left for old child
+                      final offsetAnimation = Tween<Offset>(
+                        begin: isNewChild ? const Offset(1.2, 0.0) : const Offset(-1.2, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: FadeTransition(opacity: animation, child: child),
+                      );
+                    },
+                    child: Column(
+                      key: ValueKey<int>(viewModel.activePlayerIndex),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          viewModel.activePlayer?.name ?? "...",
+                          style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 24),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: isIPad ? 600 : 340, maxHeight: isIPad ? 700 : 450),
+                          child: const RevealInteractionStack(),
+                        ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            viewModel.isSessionRevealed
+                                ? context.watch<LocaleViewModel>().l10n.get('revealed_release_hide')
+                                : context.watch<LocaleViewModel>().l10n.get('hold_to_reveal'),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -146,14 +167,15 @@ class TopicRevealScreen extends StatelessWidget {
     final bool currentRevealed = viewModel.activePlayer?.isRevealed ?? false;
     if (!currentRevealed) return const SizedBox(height: 60);
 
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: SizedBox(
         width: double.infinity,
         height: 60,
         child: CNButton(
-          label: viewModel.allPlayersRevealed ? 'Start Discussion' : 'Next Player',
-          config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+          label: viewModel.allPlayersRevealed ? l10n.get('start_discussion') : l10n.get('next_player'),
+          config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
           onPressed: () {
             if (viewModel.allPlayersRevealed) {
               context.go('/timer');
@@ -184,7 +206,7 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
   @override
   void initState() {
     super.initState();
-    _springController = AnimationController(vsync: this);
+    _springController = AnimationController(vsync: this, lowerBound: -double.infinity, upperBound: double.infinity);
   }
 
   @override
@@ -204,7 +226,7 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
   void _runSpringAnimation(double startValue, double endValue, double pixelsPerSecond) {
     _springController.stop();
     final simulation = SpringSimulation(
-      const SpringDescription(mass: 1, stiffness: 350, damping: 20),
+      const SpringDescription(mass: 1, stiffness: 200, damping: 25),
       startValue,
       endValue,
       pixelsPerSecond,
@@ -304,6 +326,7 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
   }
 
   Widget _buildInteractionLayer(RevealProvider revealProvider) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Column(
       key: const ValueKey('interaction'),
       mainAxisAlignment: MainAxisAlignment.center,
@@ -316,16 +339,16 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
             backgroundColor: Colors.white10,
           ),
           const SizedBox(height: 16),
-          const Text(
-            "REVEALING...",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16),
+          Text(
+            l10n.get('revealing'),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16),
           ),
         ] else ...[
           const Icon(Icons.lock_outline, color: Colors.white24, size: 48),
           const SizedBox(height: 8),
-          const Text(
-            "LOCKED",
-            style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold, fontSize: 14),
+          Text(
+            l10n.get('locked'),
+            style: const TextStyle(color: Colors.white24, fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ],
@@ -333,19 +356,20 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
   }
 
   Widget _buildRevealedContent(GamePlayer player) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Column(
       key: const ValueKey('revealed'),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          "SECRET TOPIC:",
-          style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
+        Text(
+          l10n.get('secret_topic_label'),
+          style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Text(
           "\"${player.topic}\"",
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900, height: 1.2),
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, height: 1.2),
         ),
         if (player.isBluffer) ...[
           const SizedBox(height: 16),
@@ -356,9 +380,9 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
             ),
-            child: const Text(
-              "BLUFF: Defend this strictly.",
-              style: TextStyle(color: Colors.redAccent, fontSize: 11, fontWeight: FontWeight.bold),
+            child: Text(
+              l10n.get('bluff_instruction_short'),
+              style: const TextStyle(color: Colors.redAccent, fontSize: 11, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -398,15 +422,15 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
                     colors: [Colors.transparent, Colors.black.withValues(alpha: 0.85)],
                   ),
                 ),
-                child: const Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.white, size: 32),
+                    const Icon(Icons.keyboard_arrow_up_rounded, color: Colors.white, size: 32),
                     Text(
-                      "Hold at top",
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                      context.watch<LocaleViewModel>().l10n.get('hold_at_top'),
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

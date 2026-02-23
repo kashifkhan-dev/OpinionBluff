@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/screens/home/game_config_screen.dart';
 import 'package:opinion_bluff/presentation/screens/settings/settings_screen.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -44,7 +46,7 @@ class _MainScaffoldState extends State<MainScaffold> {
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: isIPad ? 600 : double.infinity),
-                child: IndexedStack(index: _currentIndex, children: _pages),
+                child: _pages[_currentIndex],
               ),
             ),
           ),
@@ -58,16 +60,16 @@ class _MainScaffoldState extends State<MainScaffold> {
                 child: CNTabBar(
                   currentIndex: _currentIndex,
                   onTap: (index) => setState(() => _currentIndex = index),
-                  items: const [
+                  items: [
                     CNTabBarItem(
-                      label: 'Game',
-                      icon: CNSymbol('gamecontroller'),
-                      activeIcon: CNSymbol('gamecontroller.fill'),
+                      label: context.watch<LocaleViewModel>().l10n.get('game'),
+                      icon: const CNSymbol('gamecontroller'),
+                      activeIcon: const CNSymbol('gamecontroller.fill'),
                     ),
                     CNTabBarItem(
-                      label: 'Settings',
-                      icon: CNSymbol('gearshape'),
-                      activeIcon: CNSymbol('gearshape.fill'),
+                      label: context.watch<LocaleViewModel>().l10n.get('settings'),
+                      icon: const CNSymbol('gearshape'),
+                      activeIcon: const CNSymbol('gearshape.fill'),
                     ),
                   ],
                 ),

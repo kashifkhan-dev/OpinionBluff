@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
 import 'package:opinion_bluff/domain/entities/game_round.dart';
 import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class RevealProvider extends ChangeNotifier {
   final OpinionRepository _repository = OpinionRepository();
@@ -25,7 +26,13 @@ class RevealProvider extends ChangeNotifier {
   GamePlayer? get activePlayer => _players.isNotEmpty ? _players[_activePlayerIndex] : null;
   bool get allPlayersRevealed => _players.isNotEmpty && _players.every((p) => p.isRevealed);
 
-  Future<void> initializeGame(List<String> playerNames, String selectedPack, TopicMode mode, String punishment) async {
+  Future<void> initializeGame(
+    List<String> playerNames,
+    String selectedPack,
+    TopicMode mode,
+    String punishment,
+    AppLanguage language,
+  ) async {
     _players = [];
     _activePlayerIndex = 0;
     resetState();
@@ -34,7 +41,13 @@ class RevealProvider extends ChangeNotifier {
     List<String> selectedTopics = [];
 
     if (mode == TopicMode.same) {
-      final topics = await _repository.getTopicsForPack(selectedPack);
+      // Find pack by English title or ID
+      final allPacks = await _repository.loadPacks();
+      final pack = allPacks.firstWhere(
+        (p) => p.id == selectedPack || p.title.getForLanguage(AppLanguage.english) == selectedPack,
+        orElse: () => allPacks.first,
+      );
+      final topics = pack.topics.map((t) => t.getForLanguage(language)).toList();
       final shuffledTopics = List<String>.from(topics)..shuffle();
       selectedTopics = shuffledTopics.take(playerNames.length).toList();
     } else {
@@ -44,7 +57,7 @@ class RevealProvider extends ChangeNotifier {
 
       while (uniqueTopics.length < playerNames.length) {
         final randomPack = allPacks[random.nextInt(allPacks.length)];
-        final randomTopic = randomPack.topics[random.nextInt(randomPack.topics.length)];
+        final randomTopic = randomPack.topics[random.nextInt(randomPack.topics.length)].getForLanguage(language);
         uniqueTopics.add(randomTopic);
       }
       selectedTopics = uniqueTopics.toList();
@@ -55,15 +68,13 @@ class RevealProvider extends ChangeNotifier {
     final List<PlayerRoundData> roundPlayers = [];
     for (int i = 0; i < playerNames.length; i++) {
       final isBluffer = i == blufferIndex;
-      final topic = selectedTopics[i];
+      final topic = selectedTopics[i % selectedTopics.length]; // Safeguard
 
       roundPlayers.add(PlayerRoundData(playerIndex: i, topic: topic, isBluffer: isBluffer));
-
       _players.add(GamePlayer(index: i, name: playerNames[i], topic: topic, isBluffer: isBluffer));
     }
 
     _currentRound = GameRound(players: roundPlayers, packId: selectedPack, topicMode: mode, punishment: punishment);
-
     notifyListeners();
   }
 

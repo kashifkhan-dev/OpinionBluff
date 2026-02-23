@@ -12,6 +12,7 @@ import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
 
 import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/player_setup_view_model.dart';
 
 void main() {
   runApp(
@@ -20,6 +21,7 @@ void main() {
         Provider<IReviewRepository>(create: (_) => ReviewRepositoryImpl()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => GameConfigViewModel()),
+        ChangeNotifierProvider(create: (_) => PlayerSetupViewModel()),
         ChangeNotifierProvider(create: (_) => RevealProvider()),
         ChangeNotifierProvider(create: (_) => DiscussionProvider()),
         ChangeNotifierProvider(create: (_) => VotingProvider()),

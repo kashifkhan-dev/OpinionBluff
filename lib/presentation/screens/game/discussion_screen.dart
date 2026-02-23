@@ -5,6 +5,7 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class DiscussionScreen extends StatefulWidget {
   const DiscussionScreen({super.key});
@@ -47,7 +48,7 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                _buildHeader(),
+                _buildHeader(context),
                 const SizedBox(height: 20),
                 Expanded(child: _buildPlayerGrid(viewModel, isIPad)),
                 _buildActionArea(context, viewModel),
@@ -60,17 +61,18 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return const Column(
+  Widget _buildHeader(BuildContext context) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
+    return Column(
       children: [
         Text(
-          'Discussion',
-          style: TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900),
+          l10n.get('discussion_title'),
+          style: const TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
-          'Defend your opinion!',
-          style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600),
+          l10n.get('defend_opinion_tagline'),
+          style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -102,16 +104,17 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
   }
 
   Widget _buildActionArea(BuildContext context, DiscussionProvider viewModel) {
-    if (!viewModel.allCompleted) return const SizedBox.shrink();
+    if (!viewModel.allCompleted) return const SizedBox(height: 60);
 
+    final l10n = context.watch<LocaleViewModel>().l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: SizedBox(
         width: double.infinity,
         height: 60,
         child: CNButton(
-          label: 'Proceed to Voting',
-          config: CNButtonConfig(style: CNButtonStyle.prominentGlass),
+          label: l10n.get('proceed_to_voting'),
+          config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
           onPressed: () {
             context.go('/voting');
           },
@@ -191,7 +194,7 @@ class DiscussionPlayerCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      _buildStatusLabel(),
+                      _buildStatusLabel(context),
                     ],
                   ),
                 ),
@@ -207,10 +210,10 @@ class DiscussionPlayerCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   CNButton(
-                    label: 'Skip',
-                    config: CNButtonConfig(
+                    label: context.watch<LocaleViewModel>().l10n.get('skip'),
+                    config: const CNButtonConfig(
                       style: CNButtonStyle.prominentGlass,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                     onPressed: () => viewModel.skip(),
                   ),
@@ -235,15 +238,16 @@ class DiscussionPlayerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusLabel() {
-    String text = 'Waiting';
+  Widget _buildStatusLabel(BuildContext context) {
+    final l10n = context.watch<LocaleViewModel>().l10n;
+    String text = l10n.get('waiting');
     Color color = Colors.white38;
 
     if (player.isActive) {
-      text = 'Discussing';
+      text = l10n.get('discussing');
       color = const Color(0xFF34C759);
     } else if (player.hasCompleted) {
-      text = 'Completed';
+      text = l10n.get('completed');
       color = Colors.white60;
     }
 
