@@ -7,6 +7,9 @@ import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/domain/entities/punishment.dart';
+import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
 
 class VotingScreen extends StatefulWidget {
   const VotingScreen({super.key});
@@ -46,6 +49,13 @@ class _VotingScreenState extends State<VotingScreen> {
             ),
           ),
           SafeArea(child: viewModel.isPassingDevice ? _buildPassDeviceUI(viewModel) : _buildVotingUI(viewModel)),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(padding: const EdgeInsets.only(top: 8.0, right: 16.0), child: QuitGameButton()),
+            ),
+          ),
         ],
       ),
     );
@@ -129,20 +139,27 @@ class _VotingScreenState extends State<VotingScreen> {
           final voted = viewModel.hasPlayerVoted(p.index);
           final bool isActiveVoter = viewModel.activeVoterIndex == p.index;
 
-          final child = Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: voted ? const Color(0xFF34C759) : (isActiveVoter ? Colors.white24 : Colors.white10),
-              border: Border.all(color: isActiveVoter ? Colors.white : Colors.white24, width: isActiveVoter ? 2 : 1),
-            ),
-            child: Icon(
-              voted ? Icons.check : Icons.person_outline,
-              size: isActiveVoter ? 18 : 16,
-              color: voted ? Colors.white : (isActiveVoter ? Colors.white : Colors.white24),
-            ),
+          final child = Stack(
+            children: [
+              PlayerAvatar(
+                avatarPath: p.avatarPath,
+                isCustomAvatar: p.isCustomAvatar,
+                name: p.name,
+                size: 32,
+                borderWidth: isActiveVoter ? 2 : 1,
+                borderColor: isActiveVoter ? Colors.white : Colors.white24,
+                backgroundColor: voted ? const Color(0xFF34C759) : (isActiveVoter ? Colors.white24 : Colors.white10),
+              ),
+              if (voted)
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    child: const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 14),
+                  ),
+                ),
+            ],
           );
 
           if (isActiveVoter && !voted) {
@@ -193,16 +210,13 @@ class _VotingScreenState extends State<VotingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: isSelected ? Colors.white24 : Colors.white10),
-              child: Center(
-                child: Text(
-                  player.name[0].toUpperCase(),
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ),
+            PlayerAvatar(
+              avatarPath: player.avatarPath,
+              isCustomAvatar: player.isCustomAvatar,
+              name: player.name,
+              size: 70, // Making cards larger as requested
+              borderWidth: isSelected ? 3 : 1,
+              borderColor: isSelected ? Colors.white : Colors.white24,
             ),
             const SizedBox(height: 12),
             Text(
@@ -233,8 +247,9 @@ class _VotingScreenState extends State<VotingScreen> {
               final resultProvider = context.read<ResultProvider>();
               final revealProvider = context.read<RevealProvider>();
               final punishment = revealProvider.currentRound?.punishment ?? '';
+              final difficulty = revealProvider.currentRound?.punishmentDifficulty ?? PunishmentDifficulty.low;
 
-              resultProvider.calculateResults(viewModel.players, viewModel.votes, punishment);
+              resultProvider.calculateResults(viewModel.players, viewModel.votes, punishment, difficulty);
               context.go('/results');
             },
           ),

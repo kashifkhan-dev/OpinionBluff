@@ -19,6 +19,18 @@ class AppLocalizations {
     },
     'continue': {AppLanguage.english: 'Continue', AppLanguage.french: 'Continuer', AppLanguage.spanish: 'Continuar'},
     'back': {AppLanguage.english: 'Back', AppLanguage.french: 'Retour', AppLanguage.spanish: 'Atrás'},
+    'quit': {AppLanguage.english: 'Quit', AppLanguage.french: 'Quitter', AppLanguage.spanish: 'Salir'},
+    'quit_confirm_title': {
+      AppLanguage.english: 'Quit Game?',
+      AppLanguage.french: 'Quitter le jeu ?',
+      AppLanguage.spanish: '¿Salir del juego?',
+    },
+    'quit_confirm_message': {
+      AppLanguage.english: 'Are you sure you want to quit? Your current progress will be lost.',
+      AppLanguage.french: 'Êtes-vous sûr de vouloir quitter ? Votre progression actuelle sera perdue.',
+      AppLanguage.spanish: '¿Estás seguro de que quieres salir? Tu progreso actual se perderá.',
+    },
+    'confirm_quit': {AppLanguage.english: 'Quit', AppLanguage.french: 'Quitter', AppLanguage.spanish: 'Salir'},
     'who_play_with': {
       AppLanguage.english: 'Who do you most like\nto play with?',
       AppLanguage.french: 'Avec qui aimez-vous\nle plus jouer ?',
@@ -37,6 +49,23 @@ class AppLocalizations {
       AppLanguage.english: 'Who is Playing?',
       AppLanguage.french: 'Qui joue ?',
       AppLanguage.spanish: '¿Quién está jugando?',
+    },
+    'male': {AppLanguage.english: 'Male', AppLanguage.french: 'Homme', AppLanguage.spanish: 'Masculino'},
+    'female': {AppLanguage.english: 'Female', AppLanguage.french: 'Femme', AppLanguage.spanish: 'Femenino'},
+    'choose_avatar_source': {
+      AppLanguage.english: 'Change Avatar',
+      AppLanguage.french: 'Changer l\'avatar',
+      AppLanguage.spanish: 'Cambiar avatar',
+    },
+    'choose_from_gallery': {
+      AppLanguage.english: 'Choose from Gallery',
+      AppLanguage.french: 'Choisir dans la galerie',
+      AppLanguage.spanish: 'Elegir de la galería',
+    },
+    'take_photo': {
+      AppLanguage.english: 'Take Photo',
+      AppLanguage.french: 'Prendre une photo',
+      AppLanguage.spanish: 'Tomar foto',
     },
     'add_players_hint': {
       AppLanguage.english: 'Add at least 3 players to start.',
@@ -80,9 +109,9 @@ class AppLocalizations {
       AppLanguage.spanish: 'Modo de tema',
     },
     'enter_player_names_instr': {
-      AppLanguage.english: 'Enter names and drag to reorder',
-      AppLanguage.french: 'Entrez les noms et faites glisser pour réorganiser',
-      AppLanguage.spanish: 'Introduce nombres y arrastra para reordenar',
+      AppLanguage.english: 'Please enter player {i}',
+      AppLanguage.french: 'Veuillez entrer le joueur {i}',
+      AppLanguage.spanish: 'Por favor, introduce el jugador {i}',
     },
     'choose_topic_mode': {
       AppLanguage.english: 'Choose Topic Mode',
@@ -137,7 +166,18 @@ class AppLocalizations {
       AppLanguage.spanish: 'Cómo jugar',
     },
     'got_it': {AppLanguage.english: 'Got It', AppLanguage.french: 'Compris', AppLanguage.spanish: 'Lo tengo'},
+    'unlock_everything_title': {
+      AppLanguage.english: 'Unlock everything!',
+      AppLanguage.french: 'Tout débloquer !',
+      AppLanguage.spanish: '¡Desbloquéalo todo!',
+    },
+    'unlock_everything_desc': {
+      AppLanguage.english: 'All packs, custom topics, no ads & more.',
+      AppLanguage.french: 'Packs, sujets perso, sans pub & plus.',
+      AppLanguage.spanish: 'Packs, temas propios, sin anuncios y más.',
+    },
     'next': {AppLanguage.english: 'Next', AppLanguage.french: 'Suivant', AppLanguage.spanish: 'Siguiente'},
+    'start_game': {AppLanguage.english: 'Start Game', AppLanguage.french: 'Commencer', AppLanguage.spanish: 'Empezar'},
 
     // --- Setup / Home ---
     'game': {AppLanguage.english: 'Game', AppLanguage.french: 'Jeu', AppLanguage.spanish: 'Juego'},
@@ -149,6 +189,17 @@ class AppLocalizations {
       AppLanguage.french: 'Punitions',
       AppLanguage.spanish: 'Castigos',
     },
+    'sound_controls': {
+      AppLanguage.english: 'Sound Controls',
+      AppLanguage.french: 'Commandes sonores',
+      AppLanguage.spanish: 'Controles de sonido',
+    },
+    'sound_effects': {
+      AppLanguage.english: 'Sound Effects',
+      AppLanguage.french: 'Effets sonores',
+      AppLanguage.spanish: 'Efectos de sonido',
+    },
+    'haptics': {AppLanguage.english: 'Haptics', AppLanguage.french: 'Haptique', AppLanguage.spanish: 'Hápticos'},
     'duration': {AppLanguage.english: 'Duration', AppLanguage.french: 'Durée', AppLanguage.spanish: 'Duración'},
     'same_topic': {
       AppLanguage.english: 'Same Topic',
@@ -504,16 +555,7 @@ class AppLocalizations {
       AppLanguage.french: '3 jours gratuits, puis abonnement annuel',
       AppLanguage.spanish: '3 días gratis, luego suscripción anual',
     },
-    'weekly_plan': {
-      AppLanguage.english: 'Weekly Plan',
-      AppLanguage.french: 'Plan hebdomadaire',
-      AppLanguage.spanish: 'Plan semanal',
-    },
-    'weekly_desc': {
-      AppLanguage.english: '\$5 per week',
-      AppLanguage.french: '5\$ par semaine',
-      AppLanguage.spanish: '\$5 por semana',
-    },
+
     'restore_purchase': {
       AppLanguage.english: 'Restore Purchase',
       AppLanguage.french: 'Restaurer l\'achat',
@@ -562,15 +604,10 @@ class AppLocalizations {
       AppLanguage.french: 'Débloquez tous les packs',
       AppLanguage.spanish: 'Desbloquea todos los paquetes',
     },
-    'feature_create_words': {
-      AppLanguage.english: 'Create your words',
-      AppLanguage.french: 'Créez vos propres mots',
-      AppLanguage.spanish: 'Crea tus palabras',
-    },
-    'feature_online_bots': {
-      AppLanguage.english: 'Play online with more bots',
-      AppLanguage.french: 'Jouez en ligne avec plus de bots',
-      AppLanguage.spanish: 'Juega online con más bots',
+    'feature_create_topics': {
+      AppLanguage.english: 'Create your own topics',
+      AppLanguage.french: 'Créez vos propres sujets',
+      AppLanguage.spanish: 'Crea tus propios temas',
     },
     'feature_regular_updates': {
       AppLanguage.english: 'Regularly updated content',
@@ -597,6 +634,31 @@ class AppLocalizations {
       AppLanguage.english: '1 week · 6.99 €',
       AppLanguage.french: '1 semaine · 6,99 €',
       AppLanguage.spanish: '1 semana · 6,99 €',
+    },
+    'annual_plan_desc_offer': {
+      AppLanguage.english: '1 year · Only 9.99 € (Limited)',
+      AppLanguage.french: '1 an · Seulement 9,99 € (Limité)',
+      AppLanguage.spanish: '1 año · Solo 9,99 € (Limitado)',
+    },
+    'weekly_plan_desc_offer': {
+      AppLanguage.english: '1 week · Only 0.99 € (Intro)',
+      AppLanguage.french: '1 semaine · Seulement 0,99 € (Intro)',
+      AppLanguage.spanish: '1 semana · Solo 0,99 € (Intro)',
+    },
+    'price_per_week_annual_offer': {
+      AppLanguage.english: '0.19 €/week',
+      AppLanguage.french: '0,19 €/semaine',
+      AppLanguage.spanish: '0,19 €/semana',
+    },
+    'price_per_week_weekly_offer': {
+      AppLanguage.english: '0.99 €/week',
+      AppLanguage.french: '0,99 €/semaine',
+      AppLanguage.spanish: '0,99 €/semana',
+    },
+    'save_97': {
+      AppLanguage.english: 'Save 97%',
+      AppLanguage.french: 'Économisez 97%',
+      AppLanguage.spanish: 'Ahorra 97%',
     },
     'save_92': {
       AppLanguage.english: 'Save 92%',

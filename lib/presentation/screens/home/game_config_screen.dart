@@ -6,6 +6,7 @@ import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dar
 import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
 import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
 import 'package:opinion_bluff/domain/entities/topic_pack.dart';
+import 'package:opinion_bluff/domain/entities/game_round.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 
 class GameConfigScreen extends StatefulWidget {
@@ -130,14 +131,12 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isSubscribed ? l10n.get('subscription_rewards') : 'Unlock everything!', // Placeholder
+                      isSubscribed ? l10n.get('subscription_rewards') : l10n.get('unlock_everything_title'),
                       style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      isSubscribed
-                          ? 'You have full access to all packs!'
-                          : 'Get all packs, create custom words, remove ads.',
+                      isSubscribed ? 'You have full access to all packs!' : l10n.get('unlock_everything_desc'),
                       style: const TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
                     ),
                   ],
@@ -185,10 +184,18 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
           ),
           const Divider(color: Colors.white10),
           _buildConfigRow(
+            icon: Icons.help_outline_rounded,
+            label: l10n.get('how_to_play'),
+            showChevron: true,
+            onTap: () => context.push('/how-to-play'),
+            onLongPress: () => context.go('/'),
+          ),
+          const Divider(color: Colors.white10),
+          _buildConfigRow(
             icon: Icons.topic_outlined,
             label: l10n.get('topic_mode_title'),
             trailing: SizedBox(
-              width: 160,
+              width: 260,
               child: CNSegmentedControl(
                 labels: [l10n.get('same_topic'), l10n.get('mixed_topic')],
                 selectedIndex: viewModel.topicMode == TopicMode.same ? 0 : 1,
@@ -199,17 +206,11 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
               ),
             ),
           ),
-          const Divider(color: Colors.white10),
-          _buildConfigRow(
-            icon: Icons.help_outline_rounded,
-            label: l10n.get('how_to_play'),
-            showChevron: true,
-            onTap: () => context.push('/how-to-play'),
-            onLongPress: () => context.go('/'),
-          ),
         ]),
-        const SizedBox(height: 16),
-        _buildConfigGroup([_buildPackSelectionRow(viewModel)]),
+        if (viewModel.topicMode == TopicMode.same) ...[
+          const SizedBox(height: 16),
+          _buildConfigGroup([_buildPackSelectionRow(viewModel)]),
+        ],
       ],
     );
   }
@@ -312,7 +313,7 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
           ),
           onPressed: () => context.push('/player-setup'),
           child: Text(
-            l10n.get('got_it'),
+            l10n.get('start_game'),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 0.5),
           ),
         ),

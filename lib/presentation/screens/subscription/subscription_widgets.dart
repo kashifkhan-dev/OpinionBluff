@@ -15,9 +15,11 @@ class SubscriptionFeatureRow extends StatelessWidget {
         children: [
           SizedBox(width: 24, child: Center(child: icon)),
           const SizedBox(width: 12),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -61,22 +63,31 @@ class SubscriptionPricingCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(description, style: const TextStyle(color: Colors.white70, fontSize: 14)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                if (pricePerWeek != null)
+                if (pricePerWeek != null) ...[
+                  const SizedBox(width: 12),
                   Text(
                     pricePerWeek!,
                     style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                   ),
+                ],
               ],
             ),
           ),

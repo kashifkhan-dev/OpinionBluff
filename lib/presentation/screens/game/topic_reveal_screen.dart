@@ -7,6 +7,8 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
 
 class TopicRevealScreen extends StatelessWidget {
   const TopicRevealScreen({super.key});
@@ -94,9 +96,17 @@ class TopicRevealScreen extends StatelessWidget {
 
                 // 4 & 5. Correct End Flow: Next Player or Start Discussion
                 _buildActionArea(context, viewModel),
-
                 const SizedBox(height: 30),
               ],
+            ),
+          ),
+
+          // Quit Button ALWAYS on top
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(padding: const EdgeInsets.only(top: 8.0, right: 16.0), child: QuitGameButton()),
             ),
           ),
         ],
@@ -106,7 +116,7 @@ class TopicRevealScreen extends StatelessWidget {
 
   Widget _buildPlayerStatusList(RevealProvider viewModel, bool isIPad) {
     return SizedBox(
-      height: 100,
+      height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -121,25 +131,29 @@ class TopicRevealScreen extends StatelessWidget {
               padding: const EdgeInsets.only(right: 16.0),
               child: Column(
                 children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCurrent ? Colors.white.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
-                      border: Border.all(color: isCurrent ? Colors.white : Colors.white24, width: isCurrent ? 2 : 1),
-                    ),
-                    child: Center(
-                      child: player.isRevealed
-                          ? const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 24)
-                          : Text(
-                              player.name[0].toUpperCase(),
-                              style: TextStyle(
-                                color: isCurrent ? Colors.white : Colors.white38,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
+                  Stack(
+                    children: [
+                      PlayerAvatar(
+                        avatarPath: player.avatarPath,
+                        isCustomAvatar: player.isCustomAvatar,
+                        name: player.name,
+                        size: 60,
+                        borderWidth: isCurrent ? 3 : 1,
+                        borderColor: isCurrent ? Colors.white : Colors.white24,
+                        backgroundColor: isCurrent
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.white.withValues(alpha: 0.05),
+                      ),
+                      if (player.isRevealed)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                            child: const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 20),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -160,10 +174,6 @@ class TopicRevealScreen extends StatelessWidget {
   }
 
   Widget _buildActionArea(BuildContext context, RevealProvider viewModel) {
-    // Only show button if currently active player has revealed (permanently or session)
-    // Actually, user says: "Reveal Last Player -> Primary button changes to 'Start Discussion'"
-
-    // Check if current player is revealed
     final bool currentRevealed = viewModel.activePlayer?.isRevealed ?? false;
     if (!currentRevealed) return const SizedBox(height: 60);
 
@@ -255,7 +265,6 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
   void _onVerticalDragEnd(DragEndDetails details) {
     final revealProvider = context.read<RevealProvider>();
 
-    // 4. Topic Visibility Rule: Always hide and reset loading on release
     revealProvider.cancelLoading();
     _runSpringAnimation(_dragOffset.value, 0.0, details.velocity.pixelsPerSecond.dy);
   }
@@ -270,10 +279,8 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // 1. Bottom Card
         Positioned.fill(child: _buildBottomCard(revealProvider, player)),
 
-        // 3. Draggable Front Card
         ValueListenableBuilder<double>(
           valueListenable: _dragOffset,
           builder: (context, offset, child) {
@@ -307,10 +314,10 @@ class _RevealInteractionStackState extends State<RevealInteractionStack> with Si
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end, // 1. Bottom-aligned layout
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
-                height: 180, // Occupies lower ~40% of standard card height (450 * 0.4 = 180)
+                height: 180,
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   child: revealProvider.isSessionRevealed

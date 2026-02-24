@@ -5,6 +5,10 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
 import 'package:opinion_bluff/presentation/widgets/vote_bar_chart.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
+import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
+import 'package:opinion_bluff/domain/entities/game_player.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -50,7 +54,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 VoteBarChart(
                   voteCounts: viewModel.voteCounts,
                   sortedPlayerIndices: viewModel.sortedPlayerIndices,
-                  playerNames: viewModel.players.map((p) => p.name).toList(),
+                  players: viewModel.players,
                   blufferIndex: viewModel.blufferIndex,
                 ),
 
@@ -67,6 +71,13 @@ class _ResultScreenState extends State<ResultScreen> {
                 // Bottom Safe Area Padding
                 SizedBox(height: MediaQuery.of(context).padding.bottom + 40),
               ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(padding: const EdgeInsets.only(top: 8.0, right: 16.0), child: QuitGameButton()),
             ),
           ),
         ],
@@ -86,14 +97,22 @@ class _ResultScreenState extends State<ResultScreen> {
           fit: BoxFit.contain,
         ),
         const SizedBox(height: 16),
-        Text(
-          groupWins ? l10n.get('group_wins') : l10n.get('bluffer_wins'),
-          style: const TextStyle(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            groupWins ? l10n.get('group_wins') : l10n.get('bluffer_wins'),
+            style: const TextStyle(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900),
+            textAlign: TextAlign.center,
+          ),
         ),
         const SizedBox(height: 8),
-        Text(
-          groupWins ? l10n.get('bluffer_caught_desc') : l10n.get('bluffer_convincing_desc'),
-          style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            groupWins ? l10n.get('bluffer_caught_desc') : l10n.get('bluffer_convincing_desc'),
+            style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );
@@ -141,8 +160,68 @@ class _ResultScreenState extends State<ResultScreen> {
                 groupWins ? l10n.get('bluffer_pay_price') : l10n.get('group_pay_price'),
                 style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14, fontWeight: FontWeight.w500),
               ),
+              const SizedBox(height: 20),
+              CNButton(
+                label: l10n.get('change'),
+                config: const CNButtonConfig(style: CNButtonStyle.tinted),
+                onPressed: () => _showPunishmentPicker(context),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showPunishmentPicker(BuildContext context) {
+    final resultVm = context.read<ResultProvider>();
+    final configVm = context.read<GameConfigViewModel>();
+    final localeVm = context.read<LocaleViewModel>();
+    final l10n = localeVm.l10n;
+
+    final punishments = configVm.allPunishments.where((p) => p.difficulty == resultVm.difficulty).toList();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFF1C1C1E),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.get('punishments'),
+              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: punishments.length,
+                itemBuilder: (context, index) {
+                  final p = punishments[index];
+                  final isSelected = resultVm.punishment == p.name;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: CNButton(
+                      label: p.name.startsWith('punishment_') ? l10n.get(p.name) : p.name,
+                      config: CNButtonConfig(style: isSelected ? CNButtonStyle.filled : CNButtonStyle.glass),
+                      onPressed: () {
+                        resultVm.updatePunishment(p.name);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -198,11 +277,12 @@ class _ResultScreenState extends State<ResultScreen> {
               color: index.isEven ? Colors.transparent : Colors.white.withValues(alpha: 0.03),
               child: Column(
                 children: [
-                  _buildTableRow([
-                    voter.name,
-                    votedFor.name,
-                    isCorrect ? l10n.get('correct_vote') : l10n.get('wrong_vote'),
-                  ], isCorrect: isCorrect),
+                  _buildDataRow(
+                    voter: voter,
+                    votedFor: votedFor,
+                    resultText: isCorrect ? l10n.get('correct_vote') : l10n.get('wrong_vote'),
+                    isCorrect: isCorrect,
+                  ),
                   if (vote != viewModel.allVotes.last) const Divider(color: Colors.white10, height: 1),
                 ],
               ),
@@ -213,7 +293,7 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  Widget _buildTableRow(List<String> cells, {bool isHeader = false, bool? isCorrect}) {
+  Widget _buildTableRow(List<String> cells, {bool isHeader = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
@@ -222,20 +302,14 @@ class _ResultScreenState extends State<ResultScreen> {
             flex: 3,
             child: Text(
               cells[0],
-              style: TextStyle(
-                color: isHeader ? Colors.white38 : Colors.white,
-                fontWeight: isHeader ? FontWeight.bold : FontWeight.w600,
-              ),
+              style: const TextStyle(color: Colors.white38, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               cells[1],
-              style: TextStyle(
-                color: isHeader ? Colors.white38 : Colors.white70,
-                fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: const TextStyle(color: Colors.white38, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -243,10 +317,77 @@ class _ResultScreenState extends State<ResultScreen> {
             child: Text(
               cells[2],
               textAlign: TextAlign.right,
+              style: const TextStyle(color: Colors.white38, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataRow({
+    required GamePlayer voter,
+    required GamePlayer votedFor,
+    required String resultText,
+    required bool isCorrect,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                PlayerAvatar(
+                  avatarPath: voter.avatarPath,
+                  isCustomAvatar: voter.isCustomAvatar,
+                  name: voter.name,
+                  size: 24,
+                  borderWidth: 1,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    voter.name,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                PlayerAvatar(
+                  avatarPath: votedFor.avatarPath,
+                  isCustomAvatar: votedFor.isCustomAvatar,
+                  name: votedFor.name,
+                  size: 24,
+                  borderWidth: 1,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    votedFor.name,
+                    style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.normal, fontSize: 13),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              resultText,
+              textAlign: TextAlign.right,
               style: TextStyle(
-                color: isHeader ? Colors.white38 : (isCorrect == true ? const Color(0xFF34C759) : Colors.redAccent),
+                color: isCorrect ? const Color(0xFF34C759) : Colors.redAccent,
                 fontWeight: FontWeight.bold,
-                fontSize: isHeader ? 12 : 14,
+                fontSize: 13,
               ),
             ),
           ),

@@ -1,0 +1,30 @@
+        Padding(
+          padding: const EdgeInsets.fromLTRB(40, 20, 40, 40),
+          child: Column(
+            children: [
+              if (!vm.areNamesValid)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    l10n.get('all_names_required'),
+                    style: const TextStyle(color: Color(0xFFFF3B30), fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: Opacity(
+                  opacity: vm.areNamesValid ? 1.0 : 0.5,
+                  child: CNButton(
+                    label: l10n.get('next'),
+                    config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
+                    onPressed: vm.areNamesValid ? widget.onNext : () {},
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }

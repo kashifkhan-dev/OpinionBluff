@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/game_round.dart';
 import 'package:opinion_bluff/domain/entities/punishment.dart';
@@ -17,6 +18,11 @@ class GameConfigViewModel extends ChangeNotifier {
   ];
   final List<Punishment> _customPunishments = [];
   String _selectedPunishmentId = 'pushups';
+  PunishmentDifficulty _selectedPunishmentDifficulty = PunishmentDifficulty.low;
+
+  // Sound Settings
+  bool _soundEffectsEnabled = true;
+  bool _hapticsEnabled = true;
 
   int _durationIndex = 4; // Index for '3 minutes'
   final List<String> _durationOptions = [
@@ -31,6 +37,10 @@ class GameConfigViewModel extends ChangeNotifier {
   String get selectedPack => _selectedPack;
   String get duration => _durationOptions[_durationIndex];
   String get selectedPunishmentId => _selectedPunishmentId;
+  PunishmentDifficulty get selectedPunishmentDifficulty => _selectedPunishmentDifficulty;
+
+  bool get soundEffectsEnabled => _soundEffectsEnabled;
+  bool get hapticsEnabled => _hapticsEnabled;
 
   List<Punishment> get allPunishments => [..._predefinedPunishments, ..._customPunishments];
   List<Punishment> get customPunishments => _customPunishments;
@@ -48,9 +58,13 @@ class GameConfigViewModel extends ChangeNotifier {
   }
 
   String get selectedPunishment {
-    final p = allPunishments.firstWhere(
+    final punishmentsOfDifficulty = allPunishments.where((p) => p.difficulty == _selectedPunishmentDifficulty).toList();
+    if (punishmentsOfDifficulty.isEmpty) return 'No punishment selected';
+    // If we have a specific ID, we use it, otherwise we pick the first one of that difficulty for now.
+    // The user wants to avoid exact names in selection, so we might pick one randomly at game start later.
+    final p = punishmentsOfDifficulty.firstWhere(
       (p) => p.id == _selectedPunishmentId,
-      orElse: () => _predefinedPunishments.first,
+      orElse: () => punishmentsOfDifficulty.first,
     );
     return p.name;
   }
@@ -84,8 +98,29 @@ class GameConfigViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updatePunishmentDifficulty(PunishmentDifficulty difficulty) {
+    _selectedPunishmentDifficulty = difficulty;
+    final punishmentsOfDifficulty = allPunishments.where((p) => p.difficulty == difficulty).toList();
+    if (punishmentsOfDifficulty.isNotEmpty) {
+      _selectedPunishmentId = punishmentsOfDifficulty[Random().nextInt(punishmentsOfDifficulty.length)].id;
+    }
+    notifyListeners();
+  }
+
   void updatePunishment(String punishmentId) {
     _selectedPunishmentId = punishmentId;
+    final p = allPunishments.firstWhere((p) => p.id == punishmentId);
+    _selectedPunishmentDifficulty = p.difficulty;
+    notifyListeners();
+  }
+
+  void toggleSoundEffects() {
+    _soundEffectsEnabled = !_soundEffectsEnabled;
+    notifyListeners();
+  }
+
+  void toggleHaptics() {
+    _hapticsEnabled = !_hapticsEnabled;
     notifyListeners();
   }
 
@@ -94,6 +129,7 @@ class GameConfigViewModel extends ChangeNotifier {
     final punishment = Punishment(id: id, name: name, difficulty: difficulty, isCustom: true);
     _customPunishments.add(punishment);
     _selectedPunishmentId = id;
+    _selectedPunishmentDifficulty = difficulty;
     notifyListeners();
   }
 
@@ -101,6 +137,7 @@ class GameConfigViewModel extends ChangeNotifier {
     _customPunishments.removeWhere((p) => p.id == id);
     if (_selectedPunishmentId == id) {
       _selectedPunishmentId = _predefinedPunishments.first.id;
+      _selectedPunishmentDifficulty = _predefinedPunishments.first.difficulty;
     }
     notifyListeners();
   }

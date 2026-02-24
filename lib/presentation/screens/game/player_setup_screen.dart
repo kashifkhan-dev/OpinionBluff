@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:opinion_bluff/presentation/viewmodels/player_setup_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
 import 'package:opinion_bluff/presentation/widgets/onboarding_background.dart';
-import 'package:opinion_bluff/domain/entities/game_round.dart';
+import 'package:opinion_bluff/domain/entities/punishment.dart';
+import 'package:opinion_bluff/presentation/widgets/app_colors.dart';
+import 'package:opinion_bluff/domain/repositories/player_repository.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
 
-enum SetupStep { count, names, topicMode }
+enum SetupStep { count, names, punishment }
 
 class PlayerSetupScreen extends StatefulWidget {
   const PlayerSetupScreen({super.key});
@@ -27,7 +32,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
       setState(() => _currentStep = SetupStep.names);
       _pageController.nextPage(duration: const Duration(milliseconds: 600), curve: Curves.easeInOutCubic);
     } else if (_currentStep == SetupStep.names) {
-      setState(() => _currentStep = SetupStep.topicMode);
+      setState(() => _currentStep = SetupStep.punishment);
       _pageController.nextPage(duration: const Duration(milliseconds: 600), curve: Curves.easeInOutCubic);
     } else {
       _finishSetup();
@@ -35,11 +40,11 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
   }
 
   void _prevStep() {
-    if (_currentStep == SetupStep.names) {
-      setState(() => _currentStep = SetupStep.count);
-      _pageController.previousPage(duration: const Duration(milliseconds: 600), curve: Curves.easeInOutCubic);
-    } else if (_currentStep == SetupStep.topicMode) {
+    if (_currentStep == SetupStep.punishment) {
       setState(() => _currentStep = SetupStep.names);
+      _pageController.previousPage(duration: const Duration(milliseconds: 600), curve: Curves.easeInOutCubic);
+    } else if (_currentStep == SetupStep.names) {
+      setState(() => _currentStep = SetupStep.count);
       _pageController.previousPage(duration: const Duration(milliseconds: 600), curve: Curves.easeInOutCubic);
     } else {
       context.pop();
@@ -53,10 +58,11 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
     final localeVm = context.read<LocaleViewModel>();
 
     await revealVm.initializeGame(
-      setupVm.activePlayerNames,
+      setupVm.activePlayers,
       configVm.selectedPack,
       configVm.topicMode,
       configVm.selectedPunishment,
+      configVm.selectedPunishmentDifficulty,
       localeVm.currentLanguage,
     );
     if (mounted) {
@@ -82,7 +88,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                   children: [
                     _PlayerCountStep(onNext: _nextStep),
                     _PlayerNamesStep(onNext: _nextStep, onBack: _prevStep),
-                    _TopicModeStep(onNext: _nextStep, onBack: _prevStep),
+                    _PunishmentStep(onNext: _nextStep, onBack: _prevStep),
                   ],
                 ),
               ),
@@ -121,8 +127,8 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
         return l10n.get('player_count_title');
       case SetupStep.names:
         return l10n.get('player_names_title');
-      case SetupStep.topicMode:
-        return l10n.get('topic_mode_title');
+      case SetupStep.punishment:
+        return l10n.get('punishments');
     }
   }
 }
@@ -196,7 +202,7 @@ class _CounterButton extends StatelessWidget {
     return Opacity(
       opacity: enabled ? 1.0 : 0.3,
       child: CNButton.icon(
-        icon: CNSymbol(symbol, size: 32),
+        icon: CNSymbol(symbol, size: 24),
         config: const CNButtonConfig(style: CNButtonStyle.glass),
         onPressed: enabled ? onPressed : () {},
       ),
@@ -220,7 +226,7 @@ class _PlayerNamesStepState extends State<_PlayerNamesStep> {
   void initState() {
     super.initState();
     final vm = context.read<PlayerSetupViewModel>();
-    _controllers = List.generate(vm.playerCount, (index) => TextEditingController(text: vm.playerNames[index]));
+    _controllers = List.generate(vm.playerCount, (index) => TextEditingController(text: vm.players[index].name));
   }
 
   @override
@@ -241,15 +247,19 @@ class _PlayerNamesStepState extends State<_PlayerNamesStep> {
       for (var c in _controllers) {
         c.dispose();
       }
-      _controllers = List.generate(vm.playerCount, (index) => TextEditingController(text: vm.playerNames[index]));
+      _controllers = List.generate(vm.playerCount, (index) => TextEditingController(text: vm.players[index].name));
     }
+    final firstEmptyIndex = vm.players.take(vm.playerCount).toList().indexWhere((p) => p.name.trim().isEmpty);
+    final displayIndex = firstEmptyIndex != -1 ? firstEmptyIndex + 1 : 1;
+    final instruction = l10n.get('enter_player_names_instr').replaceAll('{i}', '$displayIndex');
+
     return Column(
       children: [
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Text(
-            l10n.get('enter_player_names_instr'),
+            instruction,
             style: const TextStyle(color: Colors.white70, fontSize: 16),
             textAlign: TextAlign.center,
           ),
@@ -298,29 +308,57 @@ class _PlayerNamesStepState extends State<_PlayerNamesStep> {
               );
             },
             itemBuilder: (context, index) {
+              final player = vm.players[index];
               return Container(
                 key: ValueKey('player_row_${_controllers[index].hashCode}'),
                 margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: Colors.white10),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.drag_indicator, color: Colors.white24),
+                    const Icon(Icons.drag_indicator, color: Colors.white24, size: 16),
+                    const SizedBox(width: 8),
+                    // Avatar
+                    GestureDetector(
+                      onTap: () => _showImageSourceActionSheet(context, vm, index),
+                      child: PlayerAvatar(
+                        avatarPath: player.customImagePath ?? player.avatarAssetPath,
+                        isCustomAvatar: player.customImagePath != null,
+                        name: player.name,
+                        size: 60,
+                        borderWidth: 3,
+                        borderColor: Colors.white,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextField(
                         controller: _controllers[index],
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: '${l10n.get('player')} ${index + 1}',
+                          hintText: l10n.get('enter_player_names_instr').replaceAll('{i}', '${index + 1}'),
                           hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+                          contentPadding: EdgeInsets.zero,
                         ),
                         onChanged: (val) => vm.updatePlayerName(index, val),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Gender Toggle Button
+                    SizedBox(
+                      height: 28,
+                      child: CNButton(
+                        label: player.gender == PlayerGender.male ? l10n.get('male') : l10n.get('female'),
+                        config: const CNButtonConfig(
+                          style: CNButtonStyle.glass,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                        ),
+                        onPressed: () => vm.toggleGender(index),
                       ),
                     ),
                   ],
@@ -359,106 +397,195 @@ class _PlayerNamesStepState extends State<_PlayerNamesStep> {
       ],
     );
   }
+
+  void _showImageSourceActionSheet(BuildContext context, PlayerSetupViewModel vm, int index) {
+    final l10n = context.read<LocaleViewModel>().l10n;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: Text(l10n.get('choose_avatar_source')),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              vm.pickImage(index, ImageSource.gallery);
+            },
+            child: Text(l10n.get('choose_from_gallery')),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              vm.pickImage(index, ImageSource.camera);
+            },
+            child: Text(l10n.get('take_photo')),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          isDefaultAction: true,
+          child: Text(l10n.get('cancel')),
+        ),
+      ),
+    );
+  }
 }
 
-class _TopicModeStep extends StatelessWidget {
+class _PunishmentStep extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onBack;
-  const _TopicModeStep({required this.onNext, required this.onBack});
+  const _PunishmentStep({required this.onNext, required this.onBack});
 
+  @override
+  State<_PunishmentStep> createState() => _PunishmentStepState();
+}
+
+class _PunishmentStepState extends State<_PunishmentStep> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<GameConfigViewModel>();
     final l10n = context.watch<LocaleViewModel>().l10n;
+    final colors = AppColors();
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          l10n.get('choose_topic_mode'),
-          style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Text(
-            l10n.get('topic_mode_desc'),
-            style: const TextStyle(color: Colors.white70, fontSize: 16),
+            l10n.get('choose_punishment'),
+            style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(height: 64),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            children: [
-              _ModeTile(
-                title: l10n.get('same_topic'),
-                isSelected: vm.topicMode == TopicMode.same,
-                onTap: () => vm.updateTopicMode(TopicMode.same),
-              ),
-              const SizedBox(height: 16),
-              _ModeTile(
-                title: l10n.get('mixed_topic'),
-                isSelected: vm.topicMode == TopicMode.mixed,
-                onTap: () => vm.updateTopicMode(TopicMode.mixed),
-              ),
-            ],
+        const SizedBox(height: 40),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                _buildDifficultyCard(
+                  context,
+                  PunishmentDifficulty.low,
+                  l10n.get('difficulty_low'),
+                  '🌱',
+                  'Light & Fun',
+                  vm,
+                  colors,
+                ),
+                const SizedBox(height: 16),
+                _buildDifficultyCard(
+                  context,
+                  PunishmentDifficulty.hard,
+                  l10n.get('difficulty_hard'),
+                  '🔥',
+                  'Getting Serious',
+                  vm,
+                  colors,
+                ),
+                const SizedBox(height: 16),
+                _buildDifficultyCard(
+                  context,
+                  PunishmentDifficulty.veryHard,
+                  l10n.get('difficulty_very_hard'),
+                  '💀',
+                  'Extreme Challenges',
+                  vm,
+                  colors,
+                ),
+              ],
+            ),
           ),
         ),
-        const Spacer(),
         Padding(
-          padding: const EdgeInsets.fromLTRB(40, 20, 40, 40),
+          padding: const EdgeInsets.fromLTRB(40, 10, 40, 40),
           child: SizedBox(
             width: double.infinity,
-            height: 64,
+            height: 60,
             child: CNButton(
               label: l10n.get('start_game'),
               config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
-              onPressed: onNext,
+              onPressed: widget.onNext,
             ),
           ),
         ),
       ],
     );
   }
-}
 
-class _ModeTile extends StatelessWidget {
-  final String title;
-  final bool isSelected;
-  final VoidCallback onTap;
+  Widget _buildDifficultyCard(
+    BuildContext context,
+    PunishmentDifficulty difficulty,
+    String title,
+    String emoji,
+    String subtitle,
+    GameConfigViewModel vm,
+    AppColors colors,
+  ) {
+    final isSelected = vm.selectedPunishmentDifficulty == difficulty;
 
-  const _ModeTile({required this.title, required this.isSelected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => vm.updatePunishmentDifficulty(difficulty),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFF3B30).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? const Color(0xFFFF3B30) : Colors.white10, width: 2),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white70,
-                  fontSize: 20,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                ),
-              ),
+        curve: Curves.easeInOut,
+        child: LiquidGlassContainer(
+          config: LiquidGlassConfig(
+            effect: isSelected ? CNGlassEffect.prominent : CNGlassEffect.regular,
+            cornerRadius: 24,
+            interactive: true,
+            shape: CNGlassEffectShape.rect,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: isSelected ? const Color(0xFFFF3B30).withValues(alpha: 0.5) : Colors.white10),
+              gradient: isSelected
+                  ? LinearGradient(
+                      colors: [const Color(0xFFFF3B30).withValues(alpha: 0.15), Colors.transparent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
             ),
-            if (isSelected) const Icon(Icons.check_circle, color: Color(0xFFFF3B30), size: 28),
-          ],
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFFFF3B30).withValues(alpha: 0.2) : Colors.white.withAlpha(5),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(emoji, style: const TextStyle(fontSize: 28)),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.white70,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(color: Colors.white38, fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected) const Icon(Icons.check_circle, color: Color(0xFFFF3B30), size: 28),
+              ],
+            ),
+          ),
         ),
       ),
     );

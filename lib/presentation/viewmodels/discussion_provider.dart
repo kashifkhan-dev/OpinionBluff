@@ -5,6 +5,8 @@ import 'package:opinion_bluff/domain/entities/game_player.dart';
 class DiscussionPlayer {
   final int index;
   final String name;
+  final String? avatarPath;
+  final bool isCustomAvatar;
   bool hasCompleted;
   bool isActive;
   double elapsedTime; // in seconds
@@ -12,6 +14,8 @@ class DiscussionPlayer {
   DiscussionPlayer({
     required this.index,
     required this.name,
+    this.avatarPath,
+    this.isCustomAvatar = false,
     this.hasCompleted = false,
     this.isActive = false,
     this.elapsedTime = 0.0,
@@ -33,7 +37,16 @@ class DiscussionProvider extends ChangeNotifier {
   int get durationSeconds => _durationSeconds;
 
   void initialize(List<GamePlayer> gamePlayers, String durationStr) {
-    _players = gamePlayers.map((p) => DiscussionPlayer(index: p.index, name: p.name)).toList();
+    _players = gamePlayers
+        .map(
+          (p) => DiscussionPlayer(
+            index: p.index,
+            name: p.name,
+            avatarPath: p.avatarPath,
+            isCustomAvatar: p.isCustomAvatar,
+          ),
+        )
+        .toList();
 
     // Parse duration string
     final match = RegExp(r'\d+').firstMatch(durationStr);

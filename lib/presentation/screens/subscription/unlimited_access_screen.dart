@@ -111,12 +111,8 @@ class _UnlimitedAccessScreenState extends State<UnlimitedAccessScreen> {
                                 icon: const Text('🔒', style: TextStyle(fontSize: 20)),
                               ),
                               SubscriptionFeatureRow(
-                                text: l10n.get('feature_create_words'),
+                                text: l10n.get('feature_create_topics'),
                                 icon: const Text('✨', style: TextStyle(fontSize: 20)),
-                              ),
-                              SubscriptionFeatureRow(
-                                text: l10n.get('feature_online_bots'),
-                                icon: const Text('🤖', style: TextStyle(fontSize: 20)),
                               ),
                               SubscriptionFeatureRow(
                                 text: l10n.get('feature_regular_updates'),
@@ -132,53 +128,56 @@ class _UnlimitedAccessScreenState extends State<UnlimitedAccessScreen> {
                           // Pricing Cards
                           SubscriptionPricingCard(
                             title: l10n.get('annual'),
-                            description: l10n.get('annual_plan_desc'),
-                            badgeText: l10n.get('save_92'),
-                            pricePerWeek: l10n.get('price_per_week_annual'),
+                            description: l10n.get('annual_plan_desc_offer'),
+                            badgeText: l10n.get('save_97'),
+                            pricePerWeek: l10n.get('price_per_week_annual_offer'),
                             isSelected: _selectedPlan == SubscriptionPlan.annual,
                             onTap: () => setState(() => _selectedPlan = SubscriptionPlan.annual),
                           ),
                           const SizedBox(height: 12),
                           SubscriptionPricingCard(
                             title: l10n.get('weekly_plan_label'),
-                            description: l10n.get('weekly_plan_desc'),
-                            pricePerWeek: l10n.get('price_per_week_weekly'),
+                            description: l10n.get('weekly_plan_desc_offer'),
+                            pricePerWeek: l10n.get('price_per_week_weekly_offer'),
                             isSelected: _selectedPlan == SubscriptionPlan.weekly,
                             onTap: () => setState(() => _selectedPlan = SubscriptionPlan.weekly),
                           ),
                           const SizedBox(height: 40),
                           // Footer Text
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/images/wheat_ear.png', height: 40, color: Colors.white24),
-                              const SizedBox(width: 12),
-                              Column(
-                                children: [
-                                  Text(
-                                    l10n.get('best_party_game').toUpperCase(),
-                                    style: const TextStyle(
-                                      color: Color(0xFFFFB800),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/wheat_ear.png', height: 40, color: Colors.white24),
+                                const SizedBox(width: 12),
+                                Column(
+                                  children: [
+                                    Text(
+                                      l10n.get('best_party_game').toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Color(0xFFFFB800),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    l10n.get('fun_for_any_group'),
-                                    style: const TextStyle(
-                                      color: Colors.white38,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+                                    Text(
+                                      l10n.get('fun_for_any_group'),
+                                      style: const TextStyle(
+                                        color: Colors.white38,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 12),
-                              Transform.flip(
-                                flipX: true,
-                                child: Image.asset('assets/images/wheat_ear.png', height: 40, color: Colors.white24),
-                              ),
-                            ],
+                                  ],
+                                ),
+                                const SizedBox(width: 12),
+                                Transform.flip(
+                                  flipX: true,
+                                  child: Image.asset('assets/images/wheat_ear.png', height: 40, color: Colors.white24),
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 20),
                         ],

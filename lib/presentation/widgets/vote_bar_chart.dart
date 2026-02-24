@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
 
 class VoteBarChart extends StatelessWidget {
   final Map<int, int> voteCounts;
   final List<int> sortedPlayerIndices;
-  final List<String> playerNames;
+  final List<GamePlayer> players;
   final int blufferIndex;
 
   const VoteBarChart({
     super.key,
     required this.voteCounts,
     required this.sortedPlayerIndices,
-    required this.playerNames,
+    required this.players,
     required this.blufferIndex,
   });
 
@@ -19,7 +21,7 @@ class VoteBarChart extends StatelessWidget {
     int maxVotes = voteCounts.values.fold(1, (prev, element) => element > prev ? element : prev);
 
     return SizedBox(
-      height: 250,
+      height: 320,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -29,7 +31,12 @@ class VoteBarChart extends StatelessWidget {
           final votes = voteCounts[playerIdx] ?? 0;
           final isBluffer = playerIdx == blufferIndex;
 
-          return _BarItem(name: playerNames[playerIdx], votes: votes, maxVotes: maxVotes, isBluffer: isBluffer);
+          return _BarItem(
+            player: players.firstWhere((p) => p.index == playerIdx),
+            votes: votes,
+            maxVotes: maxVotes,
+            isBluffer: isBluffer,
+          );
         },
       ),
     );
@@ -37,12 +44,12 @@ class VoteBarChart extends StatelessWidget {
 }
 
 class _BarItem extends StatefulWidget {
-  final String name;
+  final GamePlayer player;
   final int votes;
   final int maxVotes;
   final bool isBluffer;
 
-  const _BarItem({required this.name, required this.votes, required this.maxVotes, required this.isBluffer});
+  const _BarItem({required this.player, required this.votes, required this.maxVotes, required this.isBluffer});
 
   @override
   State<_BarItem> createState() => _BarItemState();
@@ -79,6 +86,15 @@ class _BarItemState extends State<_BarItem> with SingleTickerProviderStateMixin 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          PlayerAvatar(
+            avatarPath: widget.player.avatarPath,
+            isCustomAvatar: widget.player.isCustomAvatar,
+            name: widget.player.name,
+            size: 44,
+            borderWidth: 2,
+            borderColor: widget.isBluffer ? Colors.redAccent : Colors.white24,
+          ),
+          const SizedBox(height: 8),
           // Vote Count Label
           Text(
             widget.votes.toString(),
@@ -110,7 +126,7 @@ class _BarItemState extends State<_BarItem> with SingleTickerProviderStateMixin 
           const SizedBox(height: 12),
           // Player Name Label
           Text(
-            widget.name,
+            widget.player.name,
             textAlign: TextAlign.center,
             style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
             maxLines: 1,

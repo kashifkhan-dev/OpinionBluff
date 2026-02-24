@@ -43,7 +43,8 @@ class _MainScaffoldState extends State<MainScaffold> {
 
           SafeArea(
             bottom: false,
-            child: Center(
+            child: Align(
+              alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: isIPad ? 600 : double.infinity),
                 child: _pages[_currentIndex],

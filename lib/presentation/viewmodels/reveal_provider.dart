@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
 import 'package:opinion_bluff/domain/entities/game_round.dart';
+import 'package:opinion_bluff/domain/entities/punishment.dart';
 import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+
+import 'package:opinion_bluff/domain/repositories/player_repository.dart';
 
 class RevealProvider extends ChangeNotifier {
   final OpinionRepository _repository = OpinionRepository();
@@ -27,10 +30,11 @@ class RevealProvider extends ChangeNotifier {
   bool get allPlayersRevealed => _players.isNotEmpty && _players.every((p) => p.isRevealed);
 
   Future<void> initializeGame(
-    List<String> playerNames,
+    List<PlayerSetupData> playerSetups,
     String selectedPack,
     TopicMode mode,
     String punishment,
+    PunishmentDifficulty punishmentDifficulty,
     AppLanguage language,
   ) async {
     _players = [];
@@ -49,13 +53,13 @@ class RevealProvider extends ChangeNotifier {
       );
       final topics = pack.topics.map((t) => t.getForLanguage(language)).toList();
       final shuffledTopics = List<String>.from(topics)..shuffle();
-      selectedTopics = shuffledTopics.take(playerNames.length).toList();
+      selectedTopics = shuffledTopics.take(playerSetups.length).toList();
     } else {
       // Mixed Topic Mode: Randomly select packs per player, ensure uniqueness
       final allPacks = await _repository.loadPacks();
       final Set<String> uniqueTopics = {};
 
-      while (uniqueTopics.length < playerNames.length) {
+      while (uniqueTopics.length < playerSetups.length) {
         final randomPack = allPacks[random.nextInt(allPacks.length)];
         final randomTopic = randomPack.topics[random.nextInt(randomPack.topics.length)].getForLanguage(language);
         uniqueTopics.add(randomTopic);
@@ -63,18 +67,34 @@ class RevealProvider extends ChangeNotifier {
       selectedTopics = uniqueTopics.toList();
     }
 
-    final blufferIndex = random.nextInt(playerNames.length);
+    final blufferIndex = random.nextInt(playerSetups.length);
 
     final List<PlayerRoundData> roundPlayers = [];
-    for (int i = 0; i < playerNames.length; i++) {
+    for (int i = 0; i < playerSetups.length; i++) {
       final isBluffer = i == blufferIndex;
       final topic = selectedTopics[i % selectedTopics.length]; // Safeguard
+      final setup = playerSetups[i];
 
       roundPlayers.add(PlayerRoundData(playerIndex: i, topic: topic, isBluffer: isBluffer));
-      _players.add(GamePlayer(index: i, name: playerNames[i], topic: topic, isBluffer: isBluffer));
+      _players.add(
+        GamePlayer(
+          index: i,
+          name: setup.name.isEmpty ? 'Player ${i + 1}' : setup.name,
+          topic: topic,
+          isBluffer: isBluffer,
+          avatarPath: setup.customImagePath ?? setup.avatarAssetPath,
+          isCustomAvatar: setup.customImagePath != null,
+        ),
+      );
     }
 
-    _currentRound = GameRound(players: roundPlayers, packId: selectedPack, topicMode: mode, punishment: punishment);
+    _currentRound = GameRound(
+      players: roundPlayers,
+      packId: selectedPack,
+      topicMode: mode,
+      punishment: punishment,
+      punishmentDifficulty: punishmentDifficulty,
+    );
     notifyListeners();
   }
 

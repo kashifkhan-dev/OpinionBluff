@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:opinion_bluff/domain/entities/vote.dart';
 import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:opinion_bluff/domain/entities/punishment.dart';
 import 'dart:math';
 
 class ResultProvider extends ChangeNotifier {
@@ -11,6 +12,7 @@ class ResultProvider extends ChangeNotifier {
   List<Vote> _allVotes = [];
   List<GamePlayer> _players = [];
   String _punishment = '';
+  PunishmentDifficulty _difficulty = PunishmentDifficulty.low;
 
   Map<int, int> get voteCounts => _voteCounts;
   int get blufferIndex => _blufferIndex;
@@ -19,9 +21,21 @@ class ResultProvider extends ChangeNotifier {
   List<Vote> get allVotes => _allVotes;
   List<GamePlayer> get players => _players;
   String get punishment => _punishment;
+  PunishmentDifficulty get difficulty => _difficulty;
 
-  void calculateResults(List<GamePlayer> players, List<Vote> votes, String punishment) {
+  void updatePunishment(String name) {
+    _punishment = name;
+    notifyListeners();
+  }
+
+  void calculateResults(
+    List<GamePlayer> players,
+    List<Vote> votes,
+    String punishment,
+    PunishmentDifficulty difficulty,
+  ) {
     _punishment = punishment;
+    _difficulty = difficulty;
     _players = players;
     _allVotes = votes;
     _voteCounts = {};

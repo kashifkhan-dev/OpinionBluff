@@ -67,12 +67,8 @@ class WelcomeOfferScreen extends StatelessWidget {
                                   icon: const Text('🔒', style: TextStyle(fontSize: 18)),
                                 ),
                                 SubscriptionFeatureRow(
-                                  text: l10n.get('feature_create_words'),
+                                  text: l10n.get('feature_create_topics'),
                                   icon: const Text('✨', style: TextStyle(fontSize: 18)),
-                                ),
-                                SubscriptionFeatureRow(
-                                  text: l10n.get('feature_online_bots'),
-                                  icon: const Text('🤖', style: TextStyle(fontSize: 18)),
                                 ),
                                 SubscriptionFeatureRow(
                                   text: l10n.get('feature_regular_updates'),
@@ -87,19 +83,22 @@ class WelcomeOfferScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
                           // Unique Offer Footer
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('⚡ ', style: TextStyle(fontSize: 18)),
-                              Text(
-                                l10n.get('unique_offer'),
-                                style: const TextStyle(
-                                  color: Color(0xFFFFB800),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('⚡ ', style: TextStyle(fontSize: 18)),
+                                Text(
+                                  l10n.get('unique_offer'),
+                                  style: const TextStyle(
+                                    color: Color(0xFFFFB800),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 40),
                         ],
@@ -186,16 +185,19 @@ class WelcomeOfferScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('🎉 ', style: TextStyle(fontSize: 24)),
-                  Text(
-                    offerPrice,
-                    style: const TextStyle(color: Color(0xFFFFB800), fontSize: 32, fontWeight: FontWeight.w900),
-                  ),
-                  const Text(' 🎉', style: TextStyle(fontSize: 24)),
-                ],
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('🎉 ', style: TextStyle(fontSize: 24)),
+                    Text(
+                      offerPrice,
+                      style: const TextStyle(color: Color(0xFFFFB800), fontSize: 32, fontWeight: FontWeight.w900),
+                    ),
+                    const Text(' 🎉', style: TextStyle(fontSize: 24)),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               Text(

@@ -6,6 +6,8 @@ import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
 import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
 import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
+import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
 
 class DiscussionScreen extends StatefulWidget {
   const DiscussionScreen({super.key});
@@ -54,6 +56,13 @@ class _DiscussionScreenState extends State<DiscussionScreen> {
                 _buildActionArea(context, viewModel),
                 const SizedBox(height: 30),
               ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(padding: const EdgeInsets.only(top: 8.0, right: 16.0), child: QuitGameButton()),
             ),
           ),
         ],
@@ -163,22 +172,26 @@ class DiscussionPlayerCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1),
-                    border: Border.all(color: Colors.white38),
-                  ),
-                  child: Center(
-                    child: isCompleted
-                        ? const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 28)
-                        : Text(
-                            player.name[0].toUpperCase(),
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                  ),
+                Stack(
+                  children: [
+                    PlayerAvatar(
+                      avatarPath: player.avatarPath,
+                      isCustomAvatar: player.isCustomAvatar,
+                      name: player.name,
+                      size: 60,
+                      borderWidth: isActive ? 3 : 1,
+                      borderColor: isActive ? Colors.white : Colors.white24,
+                    ),
+                    if (isCompleted)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                          child: const Icon(Icons.check_circle, color: Color(0xFF34C759), size: 18),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(width: 16),
                 Expanded(
