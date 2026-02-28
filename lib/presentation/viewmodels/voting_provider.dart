@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/vote.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:impostor/domain/entities/vote.dart';
+import 'package:impostor/domain/entities/game_player.dart';
 
 class VotingProvider extends ChangeNotifier {
   List<GamePlayer> _players = [];

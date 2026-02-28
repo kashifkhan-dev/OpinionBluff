@@ -1,23 +1,24 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/game_round.dart';
-import 'package:opinion_bluff/domain/entities/punishment.dart';
+import 'package:impostor/domain/entities/game_round.dart';
+import 'package:impostor/domain/entities/punishment.dart';
+import 'package:impostor/domain/entities/topic_pack.dart';
+import 'package:impostor/data/repositories/punishment_repository.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class GameConfigViewModel extends ChangeNotifier {
+  final PunishmentRepository _punishmentRepository = PunishmentRepository();
   String _selectedPack = 'Daily Life';
   TopicMode _topicMode = TopicMode.same;
 
   // Punishments
-  final List<Punishment> _predefinedPunishments = [
-    Punishment(id: 'pushups', name: 'punishment_pushups', difficulty: PunishmentDifficulty.low),
-    Punishment(id: 'sing', name: 'punishment_sing', difficulty: PunishmentDifficulty.low),
-    Punishment(id: 'dance', name: 'punishment_dance', difficulty: PunishmentDifficulty.hard),
-    Punishment(id: 'dinner', name: 'punishment_dinner', difficulty: PunishmentDifficulty.hard),
-    Punishment(id: 'prank', name: 'punishment_prank', difficulty: PunishmentDifficulty.veryHard),
-    Punishment(id: 'shave', name: 'punishment_shave', difficulty: PunishmentDifficulty.veryHard),
-  ];
+  Map<PunishmentDifficulty, List<Punishment>> _punishmentsByDifficulty = {
+    PunishmentDifficulty.low: [],
+    PunishmentDifficulty.hard: [],
+    PunishmentDifficulty.veryHard: [],
+  };
   final List<Punishment> _customPunishments = [];
-  String _selectedPunishmentId = 'pushups';
+  String? _selectedPunishmentId;
   PunishmentDifficulty _selectedPunishmentDifficulty = PunishmentDifficulty.low;
 
   // Sound Settings
@@ -34,39 +35,57 @@ class GameConfigViewModel extends ChangeNotifier {
     '5 minutes',
   ];
 
+  GameConfigViewModel() {
+    _loadPunishments();
+  }
+
+  Future<void> _loadPunishments() async {
+    _punishmentsByDifficulty = await _punishmentRepository.loadPunishments();
+    if (_punishmentsByDifficulty[_selectedPunishmentDifficulty]!.isNotEmpty) {
+      _selectedPunishmentId =
+          _punishmentsByDifficulty[_selectedPunishmentDifficulty]![Random().nextInt(
+                _punishmentsByDifficulty[_selectedPunishmentDifficulty]!.length,
+              )]
+              .id;
+    }
+    notifyListeners();
+  }
+
   String get selectedPack => _selectedPack;
   String get duration => _durationOptions[_durationIndex];
-  String get selectedPunishmentId => _selectedPunishmentId;
+  String? get selectedPunishmentId => _selectedPunishmentId;
   PunishmentDifficulty get selectedPunishmentDifficulty => _selectedPunishmentDifficulty;
 
   bool get soundEffectsEnabled => _soundEffectsEnabled;
   bool get hapticsEnabled => _hapticsEnabled;
 
-  List<Punishment> get allPunishments => [..._predefinedPunishments, ..._customPunishments];
+  List<Punishment> get allPunishments => [
+    ..._punishmentsByDifficulty.values.expand((element) => element),
+    ..._customPunishments,
+  ];
   List<Punishment> get customPunishments => _customPunishments;
 
   Map<PunishmentDifficulty, List<Punishment>> get categorizedPunishments {
     final Map<PunishmentDifficulty, List<Punishment>> map = {
-      PunishmentDifficulty.low: [],
-      PunishmentDifficulty.hard: [],
-      PunishmentDifficulty.veryHard: [],
+      PunishmentDifficulty.low: [...?_punishmentsByDifficulty[PunishmentDifficulty.low]],
+      PunishmentDifficulty.hard: [...?_punishmentsByDifficulty[PunishmentDifficulty.hard]],
+      PunishmentDifficulty.veryHard: [...?_punishmentsByDifficulty[PunishmentDifficulty.veryHard]],
     };
-    for (var p in allPunishments) {
+    for (var p in _customPunishments) {
       map[p.difficulty]?.add(p);
     }
     return map;
   }
 
-  String get selectedPunishment {
+  String getSelectedPunishmentName(AppLanguage language) {
     final punishmentsOfDifficulty = allPunishments.where((p) => p.difficulty == _selectedPunishmentDifficulty).toList();
     if (punishmentsOfDifficulty.isEmpty) return 'No punishment selected';
-    // If we have a specific ID, we use it, otherwise we pick the first one of that difficulty for now.
-    // The user wants to avoid exact names in selection, so we might pick one randomly at game start later.
+
     final p = punishmentsOfDifficulty.firstWhere(
       (p) => p.id == _selectedPunishmentId,
       orElse: () => punishmentsOfDifficulty.first,
     );
-    return p.name;
+    return p.getNameForLanguage(language);
   }
 
   String get durationValue => _durationOptions[_durationIndex].split(' ')[0];
@@ -126,7 +145,12 @@ class GameConfigViewModel extends ChangeNotifier {
 
   void addCustomPunishment(String name, PunishmentDifficulty difficulty) {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
-    final punishment = Punishment(id: id, name: name, difficulty: difficulty, isCustom: true);
+    final punishment = Punishment(
+      id: id,
+      name: LocalizedString({'en': name, 'fr': name, 'es': name}),
+      difficulty: difficulty,
+      isCustom: true,
+    );
     _customPunishments.add(punishment);
     _selectedPunishmentId = id;
     _selectedPunishmentDifficulty = difficulty;
@@ -136,9 +160,17 @@ class GameConfigViewModel extends ChangeNotifier {
   void deleteCustomPunishment(String id) {
     _customPunishments.removeWhere((p) => p.id == id);
     if (_selectedPunishmentId == id) {
-      _selectedPunishmentId = _predefinedPunishments.first.id;
-      _selectedPunishmentDifficulty = _predefinedPunishments.first.difficulty;
+      _selectedPunishmentId = allPunishments.isNotEmpty ? allPunishments.first.id : null;
+      _selectedPunishmentDifficulty = allPunishments.isNotEmpty
+          ? allPunishments.first.difficulty
+          : PunishmentDifficulty.low;
     }
     notifyListeners();
+  }
+
+  String getRandomPunishmentForDifficulty(PunishmentDifficulty difficulty, AppLanguage language) {
+    final punishmentsOfDifficulty = allPunishments.where((p) => p.difficulty == difficulty).toList();
+    if (punishmentsOfDifficulty.isEmpty) return 'No punishment selected';
+    return punishmentsOfDifficulty[Random().nextInt(punishmentsOfDifficulty.length)].getNameForLanguage(language);
   }
 }

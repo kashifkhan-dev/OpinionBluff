@@ -1,0 +1,160 @@
+{
+  "low": [
+    {
+      "id": "pushups_10",
+      "name": {
+        "en": "Do 10 push-ups.",
+        "fr": "Fais 10 pompes.",
+        "es": "Hacer 10 flexiones."
+      }
+    },
+    {
+      "id": "show_last_instagram_search",
+      "name": {
+        "en": "Show your last Instagram search.",
+        "fr": "Montre ta dernière recherche Instagram.",
+        "es": "Mostrar tu última búsqueda de Instagram."
+      }
+    },
+    {
+      "id": "biggest_lie",
+      "name": {
+        "en": "Tell the biggest lie you've ever told.",
+        "fr": "Dis le plus gros mensonge que tu aies jamais dit.",
+        "es": "Decir la mentira más grande que hayas dicho."
+      }
+    },
+    {
+      "id": "confess_secret",
+      "name": {
+        "en": "Confess something no one in the group knows.",
+        "fr": "Confesse quelque chose que personne dans le groupe ne sait.",
+        "es": "Confesar algo que nadie del grupo sepa."
+      }
+    },
+    {
+      "id": "most_attractive",
+      "name": {
+        "en": "Say who you find most attractive in the group.",
+        "fr": "Dis qui tu trouves le plus attirant dans le groupe.",
+        "es": "Decir quién te parece más atractivo del grupo."
+      }
+    },
+    {
+      "id": "biggest_insecurity",
+      "name": {
+        "en": "Reveal your biggest insecurity.",
+        "fr": "Révèle ta plus grande insécurité.",
+        "es": "Decir tu mayor inseguridad."
+      }
+    }
+  ],
+  "hard": [
+    {
+      "id": "pushups_30",
+      "name": {
+        "en": "Do 30 push-ups.",
+        "fr": "Fais 30 pompes.",
+        "es": "Hacer 30 flexiones."
+      }
+    },
+    {
+      "id": "gallery_review",
+      "name": {
+        "en": "Let someone check your gallery for 1 minute (no deleting).",
+        "fr": "Laisse quelqu’un regarder ta galerie pendant 1 minute (sans rien supprimer).",
+        "es": "Dejar que alguien revise tu galería 1 minuto (sin borrar nada)."
+      }
+    },
+    {
+      "id": "call_contact_phrase",
+      "name": {
+        "en": "Call a contact and say a phrase chosen by the group.",
+        "fr": "Appelle un contact et dis une phrase choisie par le groupe.",
+        "es": "Llamar a un contacto y decir una frase que el grupo elija."
+      }
+    },
+    {
+      "id": "eat_something_weird",
+      "name": {
+        "en": "Eat something weird chosen by the group.",
+        "fr": "Mange quelque chose d’étrange choisi par le groupe.",
+        "es": "Comer algo raro que el grupo elija."
+      }
+    },
+    {
+      "id": "read_last_conversation",
+      "name": {
+        "en": "Read your last conversation out loud (no context).",
+        "fr": "Lis ta dernière conversation à voix haute (sans contexte).",
+        "es": "Leer tu última conversación en voz alta (sin contexto)."
+      }
+    },
+    {
+      "id": "show_last_google_searches",
+      "name": {
+        "en": "Show your last 5 Google searches.",
+        "fr": "Montre tes 5 dernières recherches Google.",
+        "es": "Enseñar tus últimas 5 búsquedas en Google."
+      }
+    }
+  ],
+  "veryHard": [
+    {
+      "id": "prank_parents",
+      "name": {
+        "en": "Call your parents and prank them.",
+        "fr": "Appelle tes parents et fais-leur une blague.",
+        "es": "Llamar a tus padres y gastarles una broma."
+      }
+    },
+    {
+      "id": "call_ex",
+      "name": {
+        "en": "Call your ex or last crush.",
+        "fr": "Appelle ton ex ou ton dernier flirt.",
+        "es": "Llamar a tu ex o último ligue."
+      }
+    },
+    {
+      "id": "post_embarrassing_photo",
+      "name": {
+        "en": "Post an embarrassing old photo.",
+        "fr": "Publie une ancienne photo embarrassante.",
+        "es": "Publicar una foto antigua vergonzosa."
+      }
+    },
+    {
+      "id": "five_uncomfortable_questions",
+      "name": {
+        "en": "Let the group ask you 5 uncomfortable questions and answer them.",
+        "fr": "Laisse le groupe te poser 5 questions embarrassantes et réponds-y.",
+        "es": "Dejar que el grupo te haga 5 preguntas incómodas que debes responder."
+      }
+    },
+    {
+      "id": "last_time_cried",
+      "name": {
+        "en": "Tell the last time you cried and why.",
+        "fr": "Raconte la dernière fois que tu as pleuré et pourquoi.",
+        "es": "Contar la última vez que lloraste y el motivo."
+      }
+    },
+    {
+      "id": "blocked_list",
+      "name": {
+        "en": "Show your full blocked list and explain one.",
+        "fr": "Montre ta liste complète de bloqués et explique-en un.",
+        "es": "Mostrar tu lista completa de bloqueados y explicar uno."
+      }
+    },
+    {
+      "id": "last_10_dms",
+      "name": {
+        "en": "Show your last 10 DMs without skipping any.",
+        "fr": "Montre tes 10 derniers messages privés sans en sauter aucun.",
+        "es": "Mostrar tus 10 últimos DMs sin saltarte ninguno."
+      }
+    }
+  ]
+}

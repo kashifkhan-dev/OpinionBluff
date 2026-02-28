@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/screens/home/game_config_screen.dart';
-import 'package:opinion_bluff/presentation/screens/settings/settings_screen.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/screens/home/game_config_screen.dart';
+import 'package:impostor/presentation/screens/settings/settings_screen.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MainScaffold extends StatefulWidget {

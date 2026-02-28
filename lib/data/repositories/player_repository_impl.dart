@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:opinion_bluff/domain/repositories/player_repository.dart';
+import 'package:impostor/domain/repositories/player_repository.dart';
 
 class PlayerRepositoryImpl implements IPlayerRepository {
   static const String _key = 'saved_players_v2';

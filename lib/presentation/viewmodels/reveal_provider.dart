@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
-import 'package:opinion_bluff/domain/entities/game_round.dart';
-import 'package:opinion_bluff/domain/entities/punishment.dart';
-import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/domain/entities/game_player.dart';
+import 'package:impostor/domain/entities/game_round.dart';
+import 'package:impostor/domain/entities/punishment.dart';
+import 'package:impostor/data/repositories/opinion_repository.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
-import 'package:opinion_bluff/domain/repositories/player_repository.dart';
+import 'package:impostor/domain/repositories/player_repository.dart';
 
 class RevealProvider extends ChangeNotifier {
   final OpinionRepository _repository = OpinionRepository();

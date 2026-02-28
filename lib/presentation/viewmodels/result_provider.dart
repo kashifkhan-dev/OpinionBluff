@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/vote.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
-import 'package:opinion_bluff/domain/entities/punishment.dart';
+import 'package:impostor/domain/entities/vote.dart';
+import 'package:impostor/domain/entities/game_player.dart';
+import 'package:impostor/domain/entities/punishment.dart';
 import 'dart:math';
 
 class ResultProvider extends ChangeNotifier {

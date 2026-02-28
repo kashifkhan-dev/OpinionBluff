@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:opinion_bluff/domain/entities/topic_pack.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/domain/entities/topic_pack.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class OpinionRepository {
   Future<List<TopicPack>> loadPacks() async {

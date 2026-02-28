@@ -1,4 +1,4 @@
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class AppLocalizations {
   final AppLanguage language;
@@ -8,14 +8,14 @@ class AppLocalizations {
   static final Map<String, Map<AppLanguage, String>> _localizedValues = {
     // --- Onboarding ---
     'welcome_title': {
-      AppLanguage.english: 'Welcome to\nOpinion Bluff',
-      AppLanguage.french: 'Bienvenue sur\nOpinion Bluff',
-      AppLanguage.spanish: 'Bienvenido a\nOpinion Bluff',
+      AppLanguage.english: 'Welcome to\nImpostor',
+      AppLanguage.french: 'Bienvenue sur\nImpostor',
+      AppLanguage.spanish: 'Bienvenido a\nImpostor',
     },
     'welcome_tagline': {
-      AppLanguage.english: 'Everything you need for your next\nparty night all in one place.',
-      AppLanguage.french: 'Tout ce dont vous avez besoin pour votre prochaine\nsoirée de fête en un seul endroit.',
-      AppLanguage.spanish: 'Todo lo que necesitas para tu próxima\nnoche de fiesta en un solo lugar.',
+      AppLanguage.english: 'Defend the\nUndefendable.',
+      AppLanguage.french: 'Défendez\nl\'indéfendable.',
+      AppLanguage.spanish: 'Defiende lo\nindefendible.',
     },
     'continue': {AppLanguage.english: 'Continue', AppLanguage.french: 'Continuer', AppLanguage.spanish: 'Continuar'},
     'back': {AppLanguage.english: 'Back', AppLanguage.french: 'Retour', AppLanguage.spanish: 'Atrás'},
@@ -209,7 +209,7 @@ class AppLocalizations {
     'mixed_topic': {
       AppLanguage.english: 'Mixed Topic',
       AppLanguage.french: 'Sujet mixte',
-      AppLanguage.spanish: 'Tema mixto',
+      AppLanguage.spanish: 'Diferente tema',
     },
     'topics_related_to': {
       AppLanguage.english: 'Topics Related to:',
@@ -292,11 +292,11 @@ class AppLocalizations {
     },
     'htp_overview_desc': {
       AppLanguage.english:
-          'Opinion Bluff is a social game of deception and debate. One player is the Bluffer while the others are the Honest group.',
+          'Impostor is a social game of deception and debate. One player is the Bluffer while the others are the Honest group.',
       AppLanguage.french:
-          'Opinion Bluff est un jeu social de tromperie et de débat. Un joueur est le Bluffeur tandis que les autres sont le groupe Honnête.',
+          'Impostor est un jeu social de tromperie et de débat. Un joueur est le Bluffeur tandis que les autres sont le groupe Honnête.',
       AppLanguage.spanish:
-          'Opinion Bluff es un juego social de engaño y debate. Un jugador es el Mentiroso mientras que los otros son el grupo Honesto.',
+          'Impostor es un juego social de engaño y debate. Un jugador es el Mentiroso mientras que los otros son el grupo Honesto.',
     },
     'htp_overview_detail': {
       AppLanguage.english:
@@ -751,6 +751,11 @@ class AppLocalizations {
       AppLanguage.english: 'Select difficulty',
       AppLanguage.french: 'Sélectionner la difficulté',
       AppLanguage.spanish: 'Seleccionar dificultad',
+    },
+    'show_punishments': {
+      AppLanguage.english: 'Show Punishments',
+      AppLanguage.french: 'Voir les punitions',
+      AppLanguage.spanish: 'Ver castigos',
     },
   };
 

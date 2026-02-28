@@ -6,7 +6,7 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/share_strings.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HypeScreen extends StatefulWidget {

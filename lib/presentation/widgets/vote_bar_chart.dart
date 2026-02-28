@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
-import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
+import 'package:impostor/domain/entities/game_player.dart';
+import 'package:impostor/presentation/widgets/player_avatar.dart';
 
 class VoteBarChart extends StatelessWidget {
   final Map<int, int> voteCounts;

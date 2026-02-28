@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:opinion_bluff/core/localization/app_localizations.dart';
+import 'package:impostor/core/localization/app_localizations.dart';
 
 enum AppLanguage {
   english('en'),

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:opinion_bluff/domain/entities/onboarding_data.dart';
-import 'package:opinion_bluff/domain/entities/onboarding_step.dart';
+import 'package:impostor/domain/entities/onboarding_data.dart';
+import 'package:impostor/domain/entities/onboarding_step.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
   OnboardingData _data = OnboardingData();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/onboarding_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class PreferenceScreen extends StatelessWidget {
   final VoidCallback onContinue;

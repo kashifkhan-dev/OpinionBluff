@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:opinion_bluff/domain/repositories/player_repository.dart';
-import 'package:opinion_bluff/data/repositories/player_repository_impl.dart';
+import 'package:impostor/domain/repositories/player_repository.dart';
+import 'package:impostor/data/repositories/player_repository_impl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;

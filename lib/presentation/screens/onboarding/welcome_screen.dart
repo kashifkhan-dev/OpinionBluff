@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -81,7 +81,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(40),
-              child: Transform.scale(scale: 1.2, child: Image.asset('assets/images/logo.png', fit: BoxFit.cover)),
+              child: Transform.scale(scale: 1.2, child: Image.asset('assets/images/app-logo.png', fit: BoxFit.cover)),
             ),
           ),
         ),

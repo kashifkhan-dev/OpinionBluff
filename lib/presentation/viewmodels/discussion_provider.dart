@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:impostor/domain/entities/game_player.dart';
 
 class DiscussionPlayer {
   final int index;

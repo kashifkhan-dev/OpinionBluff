@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:opinion_bluff/presentation/widgets/onboarding_background.dart';
+import 'package:impostor/presentation/widgets/onboarding_background.dart';
 import 'package:provider/provider.dart';
-import 'package:opinion_bluff/domain/repositories/review_repository.dart';
-import 'package:opinion_bluff/presentation/screens/onboarding/welcome_screen.dart';
-import 'package:opinion_bluff/presentation/screens/onboarding/preference_screen.dart';
-import 'package:opinion_bluff/presentation/screens/onboarding/how_to_play_screen.dart';
+import 'package:impostor/domain/repositories/review_repository.dart';
+import 'package:impostor/presentation/screens/onboarding/welcome_screen.dart';
+import 'package:impostor/presentation/screens/onboarding/preference_screen.dart';
+import 'package:impostor/presentation/screens/onboarding/how_to_play_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/onboarding_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/app_colors.dart';
-import 'package:opinion_bluff/domain/entities/onboarding_step.dart';
+import 'package:impostor/presentation/viewmodels/onboarding_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/widgets/app_colors.dart';
+import 'package:impostor/domain/entities/onboarding_step.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

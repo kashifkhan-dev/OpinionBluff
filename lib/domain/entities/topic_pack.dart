@@ -1,4 +1,4 @@
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class LocalizedString {
   final Map<String, String> _values;

@@ -1,4 +1,4 @@
-package com.syntaxr.opinion_bluff
+package com.syntaxr.opinionbluff
 
 import io.flutter.embedding.android.FlutterActivity
 

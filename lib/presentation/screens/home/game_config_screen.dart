@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/data/repositories/opinion_repository.dart';
-import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
-import 'package:opinion_bluff/domain/entities/topic_pack.dart';
-import 'package:opinion_bluff/domain/entities/game_round.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/viewmodels/subscription_provider.dart';
+
+import 'package:impostor/domain/entities/game_round.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class GameConfigScreen extends StatefulWidget {
   const GameConfigScreen({super.key});
@@ -17,14 +16,6 @@ class GameConfigScreen extends StatefulWidget {
 }
 
 class _GameConfigScreenState extends State<GameConfigScreen> {
-  late Future<List<TopicPack>> _packsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _packsFuture = OpinionRepository().loadPacks();
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool isIPad = MediaQuery.of(context).size.shortestSide >= 600;
@@ -52,7 +43,7 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Opinion Bluff',
+                    'Impostor',
                     style: TextStyle(
                       color: Color(0xFFFF3B30),
                       fontSize: 42,
@@ -191,65 +182,36 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
             onLongPress: () => context.go('/'),
           ),
           const Divider(color: Colors.white10),
-          _buildConfigRow(
-            icon: Icons.topic_outlined,
-            label: l10n.get('topic_mode_title'),
-            trailing: SizedBox(
-              width: 260,
-              child: CNSegmentedControl(
-                labels: [l10n.get('same_topic'), l10n.get('mixed_topic')],
-                selectedIndex: viewModel.topicMode == TopicMode.same ? 0 : 1,
-                onValueChanged: (index) {
-                  viewModel.updateTopicMode(index == 0 ? TopicMode.same : TopicMode.mixed);
-                },
-                color: const Color(0xFFFF3B30),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Column(
+              children: [
+                Text(
+                  l10n.get('topic_mode_title'),
+                  style: const TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: CNSegmentedControl(
+                    labels: [l10n.get('same_topic'), l10n.get('mixed_topic')],
+                    selectedIndex: viewModel.topicMode == TopicMode.same ? 0 : 1,
+                    onValueChanged: (index) {
+                      viewModel.updateTopicMode(index == 0 ? TopicMode.same : TopicMode.mixed);
+                    },
+                    color: const Color(0xFFFF3B30),
+                  ),
+                ),
+              ],
             ),
           ),
         ]),
-        if (viewModel.topicMode == TopicMode.same) ...[
-          const SizedBox(height: 16),
-          _buildConfigGroup([_buildPackSelectionRow(viewModel)]),
-        ],
+        //no need to select the types for now
+        // if (viewModel.topicMode == TopicMode.same) ...[
+        //   const SizedBox(height: 16),
+        //   _buildConfigGroup([_buildPackSelectionRow(viewModel)]),
+        // ],
       ],
-    );
-  }
-
-  Widget _buildPackSelectionRow(GameConfigViewModel viewModel) {
-    return Consumer<LocaleViewModel>(
-      builder: (context, localeVm, _) {
-        final l10n = localeVm.l10n;
-        return FutureBuilder<List<TopicPack>>(
-          future: _packsFuture,
-          builder: (context, snapshot) {
-            final packs = snapshot.data ?? [];
-            return _buildConfigRow(
-              icon: Icons.layers_rounded,
-              label: l10n.get('topics_related_to'),
-              trailing: CNPopupMenuButton(
-                buttonLabel: snapshot.hasData
-                    ? packs
-                          .firstWhere(
-                            (p) =>
-                                p.title.getForLanguage(AppLanguage.english) == viewModel.selectedPack ||
-                                p.id == viewModel.selectedPack,
-                            orElse: () => packs.first,
-                          )
-                          .title
-                          .getForLanguage(localeVm.currentLanguage)
-                    : viewModel.selectedPack,
-                buttonStyle: CNButtonStyle.glass,
-                items: packs
-                    .map((p) => CNPopupMenuItem(label: p.title.getForLanguage(localeVm.currentLanguage)))
-                    .toList(),
-                onSelected: (index) {
-                  viewModel.updatePack(packs[index].title.getForLanguage(AppLanguage.english));
-                },
-              ),
-            );
-          },
-        );
-      },
     );
   }
 

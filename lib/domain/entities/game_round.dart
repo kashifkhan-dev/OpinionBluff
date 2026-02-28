@@ -1,4 +1,4 @@
-import 'package:opinion_bluff/domain/entities/punishment.dart';
+import 'package:impostor/domain/entities/punishment.dart';
 
 enum TopicMode { same, mixed }
 
@@ -14,7 +14,7 @@ class GameRound {
   final List<PlayerRoundData> players;
   final String packId;
   final TopicMode topicMode;
-  final String punishment; // This will now serve as a default if needed
+  final String punishment;
   final PunishmentDifficulty punishmentDifficulty;
 
   GameRound({

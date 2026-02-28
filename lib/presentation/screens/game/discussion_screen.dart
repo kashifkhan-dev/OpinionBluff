@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/discussion_provider.dart';
-import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
-import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
+import 'package:impostor/presentation/viewmodels/discussion_provider.dart';
+import 'package:impostor/presentation/viewmodels/reveal_provider.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/widgets/quit_game_button.dart';
+import 'package:impostor/presentation/widgets/player_avatar.dart';
 
 class DiscussionScreen extends StatefulWidget {
   const DiscussionScreen({super.key});

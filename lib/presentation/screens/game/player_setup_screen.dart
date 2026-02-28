@@ -4,15 +4,15 @@ import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:opinion_bluff/presentation/viewmodels/player_setup_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/reveal_provider.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/onboarding_background.dart';
-import 'package:opinion_bluff/domain/entities/punishment.dart';
-import 'package:opinion_bluff/presentation/widgets/app_colors.dart';
-import 'package:opinion_bluff/domain/repositories/player_repository.dart';
-import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
+import 'package:impostor/presentation/viewmodels/player_setup_view_model.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/viewmodels/reveal_provider.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/widgets/onboarding_background.dart';
+import 'package:impostor/domain/entities/punishment.dart';
+import 'package:impostor/presentation/widgets/app_colors.dart';
+import 'package:impostor/domain/repositories/player_repository.dart';
+import 'package:impostor/presentation/widgets/player_avatar.dart';
 
 enum SetupStep { count, names, punishment }
 
@@ -61,7 +61,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
       setupVm.activePlayers,
       configVm.selectedPack,
       configVm.topicMode,
-      configVm.selectedPunishment,
+      configVm.getSelectedPunishmentName(localeVm.currentLanguage),
       configVm.selectedPunishmentDifficulty,
       localeVm.currentLanguage,
     );

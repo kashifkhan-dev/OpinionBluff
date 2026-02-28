@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:opinion_bluff/core/config/env_config.dart';
-import 'package:opinion_bluff/domain/repositories/review_repository.dart';
+import 'package:impostor/core/config/env_config.dart';
+import 'package:impostor/domain/repositories/review_repository.dart';
 
 class ReviewRepositoryImpl implements IReviewRepository {
   static const String _reviewRequestedKey = 'has_requested_review';

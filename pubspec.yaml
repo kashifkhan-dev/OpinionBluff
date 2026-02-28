@@ -1,5 +1,5 @@
-name: opinion_bluff
-description: "A new Flutter project."
+name: impostor
+description: "Impostor: Defend the Undefendable."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -62,7 +62,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/app-logo.png"
   min_sdk_android: 21 # android min sdk min:16, default:21
   remove_alpha_ios: true
 
@@ -84,6 +84,7 @@ flutter:
     - assets/onboarding/selections/
     - assets/reviews.json
     - assets/topics.json
+    - assets/punishments/punishments.json
     - assets/jumping gift.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

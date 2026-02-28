@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/subscription_provider.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/viewmodels/subscription_provider.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
 
 class PackItem {
   final String id;

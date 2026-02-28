@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/result_provider.dart';
-import 'package:opinion_bluff/presentation/widgets/vote_bar_chart.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/quit_game_button.dart';
-import 'package:opinion_bluff/presentation/widgets/player_avatar.dart';
-import 'package:opinion_bluff/domain/entities/game_player.dart';
+import 'package:impostor/presentation/viewmodels/result_provider.dart';
+import 'package:impostor/presentation/widgets/vote_bar_chart.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/widgets/quit_game_button.dart';
+import 'package:impostor/presentation/widgets/player_avatar.dart';
+import 'package:impostor/domain/entities/game_player.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -206,14 +206,14 @@ class _ResultScreenState extends State<ResultScreen> {
                 itemCount: punishments.length,
                 itemBuilder: (context, index) {
                   final p = punishments[index];
-                  final isSelected = resultVm.punishment == p.name;
+                  final isSelected = resultVm.punishment == p.name.getForLanguage(localeVm.currentLanguage);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: CNButton(
-                      label: p.name.startsWith('punishment_') ? l10n.get(p.name) : p.name,
+                      label: p.name.getForLanguage(localeVm.currentLanguage),
                       config: CNButtonConfig(style: isSelected ? CNButtonStyle.filled : CNButtonStyle.glass),
                       onPressed: () {
-                        resultVm.updatePunishment(p.name);
+                        resultVm.updatePunishment(p.name.getForLanguage(localeVm.currentLanguage));
                         Navigator.pop(context);
                       },
                     ),

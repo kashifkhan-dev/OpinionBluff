@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:go_router/go_router.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/core/localization/app_localizations.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/core/localization/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 class HowToPlayScreen extends StatefulWidget {

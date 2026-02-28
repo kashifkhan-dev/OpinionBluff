@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
-import 'package:opinion_bluff/presentation/viewmodels/game_config_view_model.dart';
-import 'package:opinion_bluff/presentation/viewmodels/locale_view_model.dart';
-import 'package:opinion_bluff/presentation/widgets/app_colors.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
+import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/widgets/app_colors.dart';
+import 'package:impostor/domain/entities/punishment.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -56,6 +58,18 @@ class SettingsScreen extends StatelessWidget {
               context.watch<GameConfigViewModel>().hapticsEnabled,
               () => context.read<GameConfigViewModel>().toggleHaptics(),
               colors,
+            ),
+
+            const SizedBox(height: 32),
+            Center(
+              child: TextButton(
+                onPressed: () => _showPunishmentsSheet(context, context.read<GameConfigViewModel>()),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white30,
+                  textStyle: const TextStyle(fontSize: 13, decoration: TextDecoration.underline),
+                ),
+                child: Text(l10n.get('show_punishments')),
+              ),
             ),
 
             const SizedBox(height: 120),
@@ -160,6 +174,101 @@ class SettingsScreen extends StatelessWidget {
           localeVm.setLanguage(AppLanguage.spanish);
         }
       },
+    );
+  }
+
+  void _showPunishmentsSheet(BuildContext context, GameConfigViewModel viewModel) {
+    final localeVm = context.read<LocaleViewModel>();
+    final l10n = localeVm.l10n;
+    final categorized = viewModel.categorizedPunishments;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Material(
+        color: Colors.transparent,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          decoration: const BoxDecoration(
+            color: Color(0xFF1C1C1E),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Text(
+                l10n.get('punishments'),
+                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _buildPunishmentCategory(
+                      l10n.get('difficulty_low'),
+                      categorized[PunishmentDifficulty.low] ?? [],
+                      localeVm.currentLanguage,
+                    ),
+                    _buildPunishmentCategory(
+                      l10n.get('difficulty_hard'),
+                      categorized[PunishmentDifficulty.hard] ?? [],
+                      localeVm.currentLanguage,
+                    ),
+                    _buildPunishmentCategory(
+                      l10n.get('difficulty_very_hard'),
+                      categorized[PunishmentDifficulty.veryHard] ?? [],
+                      localeVm.currentLanguage,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: CNButton(
+                  label: l10n.get('got_it'),
+                  config: const CNButtonConfig(style: CNButtonStyle.prominentGlass),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPunishmentCategory(String title, List<Punishment> items, AppLanguage language) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              color: Color(0xFFFF3B30),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        ...items.map(
+          (p) => Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(color: Colors.white.withAlpha(15), borderRadius: BorderRadius.circular(12)),
+            child: Text(
+              p.getNameForLanguage(language),
+              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
