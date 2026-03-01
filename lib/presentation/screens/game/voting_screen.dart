@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';

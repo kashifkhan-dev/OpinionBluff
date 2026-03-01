@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:impostor/presentation/viewmodels/game_config_view_model.dart';
 import 'package:impostor/presentation/viewmodels/locale_view_model.dart';
+import 'package:impostor/presentation/viewmodels/subscription_provider.dart';
 import 'package:impostor/presentation/widgets/app_colors.dart';
 import 'package:impostor/domain/entities/punishment.dart';
 
@@ -59,6 +61,11 @@ class SettingsScreen extends StatelessWidget {
               () => context.read<GameConfigViewModel>().toggleHaptics(),
               colors,
             ),
+
+            const SizedBox(height: 32),
+            Text(l10n.get('subscription_rewards'), style: const TextStyle(color: Colors.white70, fontSize: 16)),
+            const SizedBox(height: 16),
+            _buildSubscriptionStatus(context, colors),
 
             const SizedBox(height: 32),
             Center(
@@ -174,6 +181,80 @@ class SettingsScreen extends StatelessWidget {
           localeVm.setLanguage(AppLanguage.spanish);
         }
       },
+    );
+  }
+
+  Widget _buildSubscriptionStatus(BuildContext context, AppColors colors) {
+    final subProvider = context.watch<SubscriptionProvider>();
+    final l10n = context.read<LocaleViewModel>().l10n;
+    final isSubscribed = subProvider.isSubscribed;
+
+    return LiquidGlassContainer(
+      config: LiquidGlassConfig(
+        effect: CNGlassEffect.regular,
+        shape: CNGlassEffectShape.rect,
+        cornerRadius: 16,
+        interactive: true,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: (isSubscribed ? const Color(0xFF34C759) : const Color(0xFFFF9500)).withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isSubscribed ? Icons.verified_user_rounded : Icons.star_rounded,
+                    color: isSubscribed ? const Color(0xFF34C759) : const Color(0xFFFF9500),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isSubscribed ? l10n.get('unlimited_access_title') : 'Free Trial',
+                        style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isSubscribed ? 'All features unlocked' : '1 free game remaining',
+                        style: const TextStyle(color: Colors.white54, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: CNButton(
+                label: isSubscribed ? l10n.get('manage') : l10n.get('upgrade'),
+                config: CNButtonConfig(style: isSubscribed ? CNButtonStyle.glass : CNButtonStyle.filled),
+                onPressed: () {
+                  context.push('/subscription-unlimited');
+                },
+              ),
+            ),
+            if (!isSubscribed) ...[
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => subProvider.restorePurchase(),
+                child: Text(l10n.get('restore_purchase'), style: const TextStyle(color: Colors.white38, fontSize: 12)),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 

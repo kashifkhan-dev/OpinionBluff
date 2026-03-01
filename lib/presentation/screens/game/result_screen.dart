@@ -10,6 +10,8 @@ import 'package:impostor/presentation/widgets/quit_game_button.dart';
 import 'package:impostor/presentation/widgets/player_avatar.dart';
 import 'package:impostor/domain/entities/game_player.dart';
 
+import 'package:impostor/presentation/viewmodels/subscription_provider.dart';
+
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
 
@@ -19,6 +21,15 @@ class ResultScreen extends StatefulWidget {
 
 class _ResultScreenState extends State<ResultScreen> {
   bool _showDetails = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Record game played when results are shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SubscriptionProvider>().recordGamePlayed();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

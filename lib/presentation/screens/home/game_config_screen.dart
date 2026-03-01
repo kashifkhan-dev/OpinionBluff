@@ -273,7 +273,14 @@ class _GameConfigScreenState extends State<GameConfigScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
             elevation: 0,
           ),
-          onPressed: () => context.push('/player-setup'),
+          onPressed: () {
+            final subProvider = context.read<SubscriptionProvider>();
+            if (subProvider.canPlay) {
+              context.push('/player-setup');
+            } else {
+              context.push('/subscription-unlimited');
+            }
+          },
           child: Text(
             l10n.get('start_game'),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 0.5),
